@@ -1,6 +1,10 @@
+from django.conf.urls import url
 from django.urls import path
 from .views import SamplesHView
+from rest_framework.urlpatterns import format_suffix_patterns
 
 urlpatterns = [
-    path('sample/', SamplesHView),
+    path('sample/', SamplesHView, name='sample'),
 ]
+
+urlpatterns = format_suffix_patterns(urlpatterns)

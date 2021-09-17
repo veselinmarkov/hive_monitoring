@@ -18,6 +18,7 @@ class Samples(models.Model):
     class Meta:
         db_table = 'samples'
         unique_together = (('hive', 'sample_time'),)
+        managed = False
     
 
 class SamplesH(models.Model):
@@ -38,3 +39,6 @@ class SamplesH(models.Model):
     class Meta:
         db_table = 'samples_h'
         unique_together = (('hive', 'sample_time'),)
+        managed = False
+
+

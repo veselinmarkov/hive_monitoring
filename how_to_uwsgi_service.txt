@@ -1,0 +1,19 @@
+# restart service
+sudo systemctl restart uwsgi
+
+# check the status
+sudo systemctl status uwsgi.service
+
+# check the journal
+sudo journalctl -xeu uwsgi
+
+# ini file
+sudo vi /etc/uwsgi/sites/hivebox.ini
+
+# service configuration file
+sudo vi /etc/systemd/system/uwsgi.servic
+# reload daemon if service config is changed
+sudo systemctl daemon-reload
+
+# run uwsgi manually (no static serving)
+uwsgi --http :8000 --home=/home/vesko/hive_django/env --chdir=/home/vesko/hive_django -w web_project.wsgi
