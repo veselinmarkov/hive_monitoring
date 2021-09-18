@@ -1,7 +1,7 @@
 from django.urls import reverse
 from rest_framework.test import APITestCase
 from rest_framework import status
-from .models import SamplesH
+from .models import Samples
 #from .serializers import SamplesH_seri
 import json
 
@@ -45,7 +45,7 @@ class SamplesTest(APITestCase):
         #print(type(response.data), response.data)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(json.loads(response.content), good_data)
-        self.assertEqual(SamplesH.objects.count(), 1)
+        self.assertEqual(Samples.objects.count(), 1)
 
         print('POST another valid record sample_time=1586778792')
         good_data2 = {"hive": 1, "sample_time": 1586778792, "temp_low": 28.823, 
@@ -58,7 +58,7 @@ class SamplesTest(APITestCase):
         #print(response.content)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         #self.assertEqual(json.loads(response.content), good_data)
-        self.assertEqual(SamplesH.objects.count(), 2)
+        self.assertEqual(Samples.objects.count(), 2)
 
         print('Test the GET method {"hive": 1, "sample_time": "2020-06-30T20:05:00Z"}')
         response = self.client.get(url, {"hive": 1, "sample": "2020-06-30T20:05:00Z"})
@@ -71,7 +71,7 @@ class SamplesTest(APITestCase):
         response = self.client.delete(url)
         #print(response.content, response.status_code)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(SamplesH.objects.count(), 1)
+        self.assertEqual(Samples.objects.count(), 1)
 
         print('Test the DELETE method {"hive": 1, "sample_time": "2020-04-13T11:53:12Z"}')
         url = '/sample/?sample=2020-04-13T11:53:12Z&hive=1'
@@ -79,4 +79,4 @@ class SamplesTest(APITestCase):
         response = self.client.delete(url)
         #print(response.content, response.status_code)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(SamplesH.objects.count(), 0)
+        self.assertEqual(Samples.objects.count(), 0)

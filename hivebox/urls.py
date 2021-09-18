@@ -5,7 +5,7 @@ from rest_framework.urlpatterns import format_suffix_patterns
 
 urlpatterns = [
     path('sample/', SamplesView, name='sample'),
-    path('sample_hourly/', SamplesHView, name='sample'),
+    path('sample_hourly/', SamplesHView, name='sample_hourly'),
 ]
 
 urlpatterns = format_suffix_patterns(urlpatterns)
