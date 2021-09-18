@@ -1,0 +1,25 @@
+#install mysql and libmysqlclient-dev
+sudo apt-get install mysql-server
+sudo apt-get install libmysqlclient-dev
+
+#create and activate the virtualenv
+sudo apt-get install python3-venv
+sudo virtualenv env
+source env/bin/activate
+
+#all requirements for the project
+pip3 install -r requiremets.txt
+
+#start mysqld
+sudo mysqld_safe
+
+#create user vesko in mysql
+sudo mysql -u root -p mysql
+#next commands in mysql shell:
+update user set Select_priv="Y", Insert_priv="Y", Update_priv="Y", Delete_priv="Y",Create_priv="Y",Reload_priv="Y",Index_priv="Y",Alter_priv="Y" where user="vesko";
+update user set References_priv="Y" where user="vesko";
+update user set Drop_priv="Y" where user="vesko";
+flush privileges;
+
+#run the tests
+python3 manage.py test
