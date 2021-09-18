@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import SamplesH
+from .models import SamplesH, Samples
 
 class SamplesH_seri(serializers.ModelSerializer):
     class Meta:
@@ -8,3 +8,9 @@ class SamplesH_seri(serializers.ModelSerializer):
         'temp_high', 'temp_hot', 'temp_out', 'temp_target', 'humi_in', 'humi_out',
         'heat_pwr', 'fan', 'mode', 'heater_breakers']
 
+class Samples_seri(serializers.ModelSerializer):
+    class Meta:
+        model = Samples
+        fields = ['hive', 'sample_time', 'temp_low', 
+        'temp_high', 'temp_hot', 'temp_out', 'temp_target', 'humi_in', 'humi_out',
+        'heat_pwr', 'fan', 'mode', 'heater_breakers']
