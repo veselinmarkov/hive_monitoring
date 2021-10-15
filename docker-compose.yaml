@@ -1,0 +1,39 @@
+version: '3.7'
+
+services:
+  mysql:
+    image: mysql:5.7
+    volumes:
+      - type: volume
+        source: samples_mysql_db 
+        target: /var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: secret
+      MYSQL_DATABASE: vesko
+    healthcheck:
+      test: "exit 0"
+  
+  app:
+    container_name: app
+    build: .
+    #volumes:
+    #  - ./app:/var/www/html
+    working_dir: /app
+    ports:
+      - 8000:8000
+    #command: sh -c "python manage.py test"
+    depends_on:
+      mysql:
+        condition: service_healthy
+
+  test:
+    container_name: test
+    build: .
+    working_dir: /app
+    command: sh -c "python manage.py test"
+    depends_on:
+      mysql:
+        condition: service_healthy
+
+volumes:
+  samples_mysql_db:

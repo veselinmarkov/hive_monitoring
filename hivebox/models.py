@@ -1,8 +1,8 @@
 from django.db import models
 
 class Samples(models.Model):
-    hive = models.IntegerField()
-    sample_time = models.DateTimeField(primary_key=True)
+    hive = models.IntegerField(blank=False, null=False)
+    sample_time = models.DateTimeField(blank=False, null=False)
     temp_low = models.DecimalField(max_digits=6, decimal_places=3, blank=True, null=True)
     temp_high = models.DecimalField(max_digits=6, decimal_places=3, blank=True, null=True)
     temp_hot = models.DecimalField(max_digits=6, decimal_places=3, blank=True, null=True)
@@ -18,12 +18,12 @@ class Samples(models.Model):
     class Meta:
         db_table = 'samples'
         unique_together = (('hive', 'sample_time'),)
-        managed = False
+        managed = True
     
 
 class SamplesH(models.Model):
-    hive = models.IntegerField()
-    sample_time = models.DateTimeField(primary_key=True)
+    hive = models.IntegerField(blank=False, null=False)
+    sample_time = models.DateTimeField(blank=False, null=False)
     temp_low = models.DecimalField(max_digits=6, decimal_places=3, blank=True, null=True)
     temp_high = models.DecimalField(max_digits=6, decimal_places=3, blank=True, null=True)
     temp_hot = models.DecimalField(max_digits=6, decimal_places=3, blank=True, null=True)
@@ -39,6 +39,6 @@ class SamplesH(models.Model):
     class Meta:
         db_table = 'samples_h'
         unique_together = (('hive', 'sample_time'),)
-        managed = False
+        managed = True
 
 

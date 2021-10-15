@@ -5,12 +5,16 @@ from .models import SamplesH, Samples
 from .serializers import SamplesH_seri, Samples_seri
 from rest_framework.parsers import JSONParser
 from rest_framework.decorators import api_view
+from rest_framework.decorators import permission_classes
 from rest_framework.response import Response
 from rest_framework import status
 from datetime import datetime
+from rest_framework import permissions
+from hivebox.permissions import IsOwnerOrReadOnly
 
 # Create your views here.
 @csrf_exempt
+@permission_classes([IsOwnerOrReadOnly])
 @api_view(['GET', 'POST', 'DELETE'])
 def SamplesHView(request, format=None):
 
@@ -26,6 +30,11 @@ def SamplesHView(request, format=None):
             return Response('The requested record was not found', status=status.HTTP_204_NO_CONTENT)
         return sample
 
+    content = {
+        'user': str(request.user),  # `django.contrib.auth.User` instance.
+        'auth': str(request.auth),  # None
+    }
+    print(content)
     if request.method == 'GET':
         sample = get_sample(request)
         if isinstance(sample, Response):
@@ -43,8 +52,9 @@ def SamplesHView(request, format=None):
             timestamp = None
         if timestamp:
             data['sample_time'] = datetime.utcfromtimestamp(timestamp).strftime('%Y-%m-%dT%H:%M:%SZ')
-        #print(data['sample_time'])
+        print(data['sample_time'])
         sample_seri = SamplesH_seri(data =data)
+        print('serializer prepared')
         if sample_seri.is_valid():
             sample_seri.save()
             return Response(sample_seri.validated_data, status=status.HTTP_201_CREATED)
@@ -58,6 +68,7 @@ def SamplesHView(request, format=None):
         return Response('Record deleted', status=status.HTTP_200_OK)
 
 @csrf_exempt
+@permission_classes([permissions.IsAuthenticatedOrReadOnly])
 @api_view(['GET', 'POST', 'DELETE'])
 def SamplesView(request, format=None):
 
@@ -90,7 +101,7 @@ def SamplesView(request, format=None):
             timestamp = None
         if timestamp:
             data['sample_time'] = datetime.utcfromtimestamp(timestamp).strftime('%Y-%m-%dT%H:%M:%SZ')
-        #print(data['sample_time'])
+        print(data['sample_time'])
         sample_seri = Samples_seri(data =data)
         if sample_seri.is_valid():
             sample_seri.save()

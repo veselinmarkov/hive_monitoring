@@ -84,7 +84,7 @@ DATABASES = {
         'DATABASE': 'vesko',
         'USER': 'root',
         'PASSWORD': 'secret',
-        'HOST': 'mysql',
+        'HOST': 'localhost',
     }
 }
 
