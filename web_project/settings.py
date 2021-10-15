@@ -25,7 +25,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-rna9496%jo3u**+fetl60$4qyq9mx9xtcli+r$i0&5hb+s15^)'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = ('test' in sys.argv)
 
 ALLOWED_HOSTS = ['127.0.0.1', 'ed1f29b.online-server.cloud']
 
@@ -84,7 +84,7 @@ DATABASES = {
         'DATABASE': 'vesko',
         'USER': 'root',
         'PASSWORD': 'secret',
-        'HOST': 'mysql',
+        'HOST': 'localhost',
     }
 }
 
