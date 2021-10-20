@@ -13,10 +13,11 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 from pathlib import Path
 import os
 import sys
+import environ
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-
+env = environ.Env(DEBUG=(bool, False))
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
@@ -25,9 +26,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-rna9496%jo3u**+fetl60$4qyq9mx9xtcli+r$i0&5hb+s15^)'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = ('test' in sys.argv)
+DEBUG = (os.getenv("DEVELOP", False))
 
-ALLOWED_HOSTS = ['127.0.0.1', 'ed1f29b.online-server.cloud']
+ALLOWED_HOSTS = ['localhost','127.0.0.1', 'ed1f29b.online-server.cloud']
 
 
 # Application definition
@@ -144,4 +145,8 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 REST_FRAMEWORK = {
     'COERCE_DECIMAL_TO_STRING': False,
+}
+
+HIVEBOX = {
+    'AGGREGATE_NUMBER_THRESHOLD': 500,
 }
