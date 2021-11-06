@@ -5,7 +5,7 @@ sudo systemctl restart uwsgi
 sudo systemctl status uwsgi.service
 
 # check the journal
-sudo journalctl -xeu uwsgi
+sudo journalctl -xefu uwsgi
 
 # ini file
 sudo vi /etc/uwsgi/sites/hivebox.ini
