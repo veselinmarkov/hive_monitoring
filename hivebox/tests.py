@@ -14,7 +14,7 @@ class SamplesTest(APITestCase):
 
     def test_01_authorization(self):
         ''' Test JWT authorization, interfaces /user/create/; /token/obtain/; /token/refresh/'''
-        print('Create a test user')
+        print('\nCreate a test user')
         user_url = reverse('create_user')
         response = self.client.post(user_url, {"email": "test@test.com", "username": "test", "password": "test_pass"}, format="json")
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
@@ -125,15 +125,15 @@ class SamplesTest(APITestCase):
         self.assertEqual(response.json()['data']['totalItems'], 2)
 
         print('Test the DELETE method {"hive": 1, "sample_time": "2020-06-30T20:05:00Z"}')
-        url = '/sample/?sample=2020-06-30T20:05:00.000Z&hive=1'
-        #response = self.client.delete(url, {"hive": 1, "sample": "2020-06-30T20:05:00Z"})
-        response = self.client.delete(url, HTTP_AUTHORIZATION='JWT {}'.format(access_token))
-        #print(response.content, response.status_code)
+        url = '/api/sample/?sample=2020-06-30T20:05:00.000Z&hive=1'
+        response = self.client.delete(url, {"hive": 1, "sample": "2020-06-30T20:05:00Z"}, HTTP_AUTHORIZATION='JWT {}'.format(access_token))
+        # response = self.client.delete(url, HTTP_AUTHORIZATION='JWT {}'.format(access_token))
+        print(response.json())
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(Samples.objects.count(), 1)
 
         print('Test the DELETE method {"hive": 1, "sample_time": "2020-04-13T11:53:12Z"}')
-        url = '/sample/?sample=2020-04-13T11:53:12Z&hive=1'
+        url = '/api/sample/?sample=2020-04-13T11:53:12Z&hive=1'
         #response = self.client.delete(url, {"hive": 1, "sample": "2020-06-30T20:05:00Z"})
         response = self.client.delete(url, HTTP_AUTHORIZATION='JWT {}'.format(access_token))
         #print(response.content, response.status_code)
@@ -143,7 +143,7 @@ class SamplesTest(APITestCase):
     def test_03_POST_GET_PUT_DELETE_hive(self):
         """ Testing interface /hive and /hive/<int:pk> """
         url = reverse('hive')
-        print('Test NOT Authorized /hive POST method')
+        print('\nTest NOT Authorized /hive POST method')
         data = {"name": "Test hive"}
         response = self.client.post(url, data)
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)

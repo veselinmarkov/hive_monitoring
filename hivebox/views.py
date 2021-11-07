@@ -234,7 +234,6 @@ class SamplesView(APIView):
 
     @staticmethod
     def get_sample(request):
-        #print('GET dict:', request.GET)
         if 'sample' not in request.GET or 'hive' not in request.GET: 
             return Response('Parameters sample and hive expected', status=status.HTTP_400_BAD_REQUEST)
         sampletime = request.GET['sample']
@@ -246,9 +245,18 @@ class SamplesView(APIView):
         return sample
 
     def get(self, request, format=None):
-        sample = self.get_sample(request)
+        # sample = self.get_sample(request)
+        if 'sample' not in request.GET or 'hive' not in request.GET: 
+            return Response('Parameters sample and hive expected', status=status.HTTP_400_BAD_REQUEST)
+        sampletime = request.GET['sample']
+        hive = request.GET['hive']
+        try:
+            sample = Samples.objects.get(sample_time =sampletime, hive =hive)
+        except Samples.DoesNotExist:
+            return Response('The requested record was not found', status=status.HTTP_204_NO_CONTENT)
+        """ return sample
         if isinstance(sample, Response):
-            return sample
+            return sample """
         sample_seri = Samples_seri(sample)
         #print(sample_seri.data)
         return Response(sample_seri.data)
@@ -274,6 +282,16 @@ class SamplesView(APIView):
         
     def delete(self, request, format=None):
         sample = self.get_sample(request)
+        """ print(request.resolver_match.kwargs)
+        if 'sample' not in request.DELETE or 'hive' not in request.DELETE: 
+            return Response('Parameters sample and hive expected', status=status.HTTP_400_BAD_REQUEST)
+        sampletime = request.DELETE['sample']
+        hive = request.DELETE['hive']
+        try:
+            sample = Samples.objects.get(sample_time =sampletime, hive =hive)
+        except Samples.DoesNotExist:
+            return Response('The requested record was not found', status=status.HTTP_204_NO_CONTENT) """
+        # return sample
         if isinstance(sample, Response):
             #print('Could not retreive the record')
             return sample
