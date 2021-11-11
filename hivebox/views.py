@@ -37,7 +37,7 @@ AGGR_STR = ["",
     "concat(date_format(sample_time, '%%Y-%%m-%%d '),lpad(floor(hour(sample_time)/6)*6, 2, '0'))",
     "date_format(sample_time, '%%Y-%%m-%%d')"
 ]
-AGGR_NAMES = ['no aggregation','1 min', '5 min', '15 min', '1 hour', '6 hours', 'daily']
+AGGR_NAMES = ['20s','1m', '5m', '15m', '1h', '6h', '1d']
 AGGR_PERIOD = [1, 60, 5*60, 15*60, 60*60, 6*60*60, 24*60*60]
 SAMPLE_PERIOD_SECONDS = 20
 AGGR_START_STEP = 1
