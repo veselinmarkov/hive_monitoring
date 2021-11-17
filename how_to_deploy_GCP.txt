@@ -1,0 +1,66 @@
+# Create Mysql service
+gcloud sql instances create hive \
+    --project optimum-harbor-303817 \
+    --database-version MYSQL_5_7 \
+    --tier db-f1-micro \
+    --region europe-west3
+
+gcloud sql databases create hive \
+    --instance hive
+
+gcloud sql users create vesko \
+    --instance hive \
+    --password password
+
+
+# create bucket
+gsutil mb -l europe-west3 gs://optimum-harbor-303817_bucket
+
+# Create .env file
+echo DATABASE_URL=postgres://vesko:password@//cloudsql/optimum-harbor-303817:europe-west3:hive/hive > .env
+echo GS_BUCKET_NAME=optimum-harbor-303817_bucket >> .env
+echo SECRET_KEY=$(cat /dev/urandom | LC_ALL=C tr -dc '[:alpha:]'| fold -w 50 | head -n1) >> .env
+
+
+# Delete the secrets if exists
+gcloud secrets delete django_settings
+gcloud secrets delete superuser_password
+
+# Create secret
+gcloud secrets create django_settings --data-file .env
+
+# Create superuser (Django) random password
+echo -n "$(cat /dev/urandom | LC_ALL=C tr -dc '[:alpha:]'| fold -w 30 | head -n1)" | gcloud secrets create superuser_password --data-file -
+
+export PROJECTNUM=$(gcloud projects describe optimum-harbor-303817 --format='value(projectNumber)')
+
+# Grat access to the secret for Cloud Run
+gcloud secrets add-iam-policy-binding django_settings \
+    --member serviceAccount:$PROJECTNUM-compute@developer.gserviceaccount.com \
+    --role roles/secretmanager.secretAccessor
+
+# Grat access to the secret for Cloud build
+gcloud secrets add-iam-policy-binding django_settings \
+    --member serviceAccount:$PROJECTNUM@cloudbuild.gserviceaccount.com \
+    --role roles/secretmanager.secretAccessor
+
+# Grant access to secret for Cloud build
+gcloud secrets add-iam-policy-binding superuser_password \
+    --member serviceAccount:$PROJECTNUM@cloudbuild.gserviceaccount.com \
+    --role roles/secretmanager.secretAccessor
+
+# Grant access for Cloud built to access Cloud SQL.
+gcloud projects add-iam-policy-binding optimum-harbor-303817 \
+    --member serviceAccount:$PROJECTNUM@cloudbuild.gserviceaccount.com \
+    --role roles/cloudsql.client
+
+export GOOGLE_CLOUD_PROJECT=optimum-harbor-303817
+
+# Download the proxy application in ~/.local.bin (in $PATH) and start it on port 5432 to connect to GCP SQL
+wget https://dl.google.com/cloudsql/cloud_sql_proxy.linux.amd64 -O ~/.loval/bin/cloud_sql_proxy
+../cloud_sql_proxy -instances="optimum-harbor-303817:europe-west3:hive"=tcp:5432
+
+
+# Build the image at GCP
+gcloud builds submit --config cloudmigrate.yaml \
+    --substitutions _INSTANCE_NAME=hive,_REGION=europe-west3
