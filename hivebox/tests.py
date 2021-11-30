@@ -1,18 +1,25 @@
 from django.urls import reverse
-from rest_framework.test import APITestCase
+from rest_framework.test import APITestCase, APIClient
 from rest_framework import status
 from .models import Samples
 #from .serializers import SamplesH_seri
 import json
+import os
 
-# Create your tests here.
+from django.contrib.auth.models import User
+from asymmetric_jwt_auth.models import PublicKey
+from asymmetric_jwt_auth.keys import PrivateKey, RSAPrivateKey, RSAPublicKey
+from asymmetric_jwt_auth.tokens import Token
+
+
 class SamplesTest(APITestCase):
     """ Test module for GET, POST, DELETE in Samples """
 
     def setUp(self):
         pass
 
-    def test_01_authorization(self):
+    #More tests need
+    def test_01_user_authentication(self):
         ''' Test JWT authorization, interfaces /user/create/; /token/obtain/; /token/refresh/'''
         print('\nCreate a test user')
         user_url = reverse('create_user')
@@ -40,26 +47,46 @@ class SamplesTest(APITestCase):
 
     def test_02_POST_GET_DELETE_sample(self):
         """
-        Testing main interface /sample for POST/GET single sample. 
-        Also the /samples interface for GETting multiple automatic aggregated samples 
+        Testing /sample/ (GET and DELETE) and /sample (POST) interfaces. 
         """
-        print('\nPOST an invalid record "hive": None')
-        url = reverse('sample')
+        client = APIClient()
+        print('\nPOST a valid record no AUTH HEADER')
+        good_data = {"hive": 1, "sample_time": "2020-06-30T20:05:00Z", "temp_low": 28.823, 
+            "temp_high": None, "temp_hot": 31.663, "temp_out": 24, "temp_target": -10.000, 
+            "humi_in": 47.13, "humi_out": None, "heat_pwr": 0, "fan": 758, 
+            "mode": "monitor", "heater_breakers": 10}
+        response = client.post(reverse('sample'), good_data, format='json')
+        #print(type(json.loads(response.content)), json.loads(response.content))
+        #print(type(response.data), response.data)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+        user = User.objects.create_user(username="foo")
+        user.save()
+        key_rsa = RSAPrivateKey.generate()
+        user_key_rsa = PublicKey.objects.create(
+            user=user, key=key_rsa.public_key.as_pem.decode()
+        )
+        """ print(key_rsa.as_pem)
+        print(key_rsa.as_pem.decode()) """
+        user_key_rsa.save()
+        header = Token(user.username).create_auth_header(key_rsa)
+
+        print('POST an invalid record "hive": None')
         bad_data = {"hive": None, "sample_time": "2020-06-30T20:05:00Z", "temp_low": 28.823, 
             "temp_high": None, "temp_hot": 31.663, "temp_out": 24, "temp_target": -10.000, 
             "humi_in": 47.13, "humi_out": None, "heat_pwr": 0, "fan": 758, 
             "mode": "monitor", "heater_breakers": 10}
-        response = self.client.post(url, bad_data, format='json')
+        response = client.post(reverse('sample'), bad_data, HTTP_AUTHORIZATION=header, format='json')
         #self.assertEqual(response.data, serializer.data)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         
         print('POST an invalid record "hive" missing')
-        url = reverse('sample')
         bad_data = {"sample_time": "2020-06-30T20:05:00Z", "temp_low": 28.823, 
             "temp_high": None, "temp_hot": 31.663, "temp_out": 24, "temp_target": -10.000, 
             "humi_in": 47.13, "humi_out": None, "heat_pwr": 0, "fan": 758, 
             "mode": "monitor", "heater_breakers": 10}
-        response = self.client.post(url, bad_data, format='json')
+        header = Token(user.username).create_auth_header(key_rsa)
+        response = client.post(reverse('sample'), bad_data, HTTP_AUTHORIZATION=header, format='json')
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
         print('POST a valid record')
@@ -67,19 +94,21 @@ class SamplesTest(APITestCase):
             "temp_high": None, "temp_hot": 31.663, "temp_out": 24, "temp_target": -10.000, 
             "humi_in": 47.13, "humi_out": None, "heat_pwr": 0, "fan": 758, 
             "mode": "monitor", "heater_breakers": 10}
-        response = self.client.post(url, good_data, format='json')
+        header = Token(user.username).create_auth_header(key_rsa)
+        response = client.post(reverse('sample'), good_data, HTTP_AUTHORIZATION=header, format='json')
         #print(type(json.loads(response.content)), json.loads(response.content))
         #print(type(response.data), response.data)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(json.loads(response.content), good_data)
         self.assertEqual(Samples.objects.count(), 1)
 
-        print('POST another valid record sample_time=1586778792')
+        print('POST valid record (sample_time=1586778792)')
         good_data2 = {"hive": 1, "sample_time": 1586778792, "temp_low": 28.823, 
             "temp_high": None, "temp_hot": 31.663, "temp_out": 24, "temp_target": -10.000, 
             "humi_in": 47.13, "humi_out": None, "heat_pwr": 0, "fan": 758, 
-            "mode": "monitor", "heater_breakers": 10}
-        response = self.client.post(url, good_data2, format='json')
+            "mode": "monitor", "heater_breakers": 10}        
+        header = Token(user.username).create_auth_header(key_rsa)
+        response = client.post(reverse('sample'), good_data2, HTTP_AUTHORIZATION=header, format='json')
         #print(type(json.loads(response.content)), json.loads(response.content))
         #print(type(response.data), response.data)
         #print(response.content)
@@ -88,59 +117,34 @@ class SamplesTest(APITestCase):
         self.assertEqual(Samples.objects.count(), 2)
         
         print('Test NOT Authorized GET method {"hive": 1, "sample_time": "2020-06-30T20:05:00Z"}')
-        response = self.client.get(url, {"hive": 1, "sample": "2020-06-30T20:05:00Z"})
-        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+        response = client.get(reverse('sample'), {"hive": 1, "sample": "2020-06-30T20:05:00Z"}, format='json')
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
         
-        data = {"hive": 1, "sample1": "2020-04-01T00:05:00Z", "sample2": "2020-06-30T23:05:00Z"}
-        print('Test NOT Authorized multiple samples GET method %s' % data)
-        response = self.client.get(reverse('sample_range'), data)
-        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
-
-        print('Create a test user')
-        user_url = reverse('create_user')
-        response = self.client.post(user_url, {"email": "test@test.com", "username": "test", "password": "test_pass"}, format="json")
-        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-
-        print('Get tokens') 
-        token_url = reverse('token_create')
-        response = self.client.post(token_url, {"username": "test", "password": "test_pass"}, format="json")
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        body = response.json()
-        # print(type(body), body)
-        # self.assertTrue('refresh' in body and 'access' in body)
-        access_token = body['access']
-
         print('Test the GET method {"hive": 1, "sample_time": "2020-06-30T20:05:00Z"}')
-        # print('JWT {}'.format(SamplesTest.access_token)) #HTTP_AUTHORIZATION
-        response = self.client.get(url, {"hive": 1, "sample": "2020-06-30T20:05:00Z"}, HTTP_AUTHORIZATION='JWT {}'.format(access_token))
+        header = Token(user.username).create_auth_header(key_rsa)
+        response = client.get(reverse('sample'), {"hive": 1, "sample": "2020-06-30T20:05:00Z"}, HTTP_AUTHORIZATION=header, format="json")
         # print(response.json())
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(json.loads(response.content), good_data)
-        
-        data = {"hive": 1, "sample1": "2020-04-01T00:05:00Z", "sample2": "2020-06-30T23:05:00Z"}
-        print('Test multiple samples GET method %s' % data)
-        response = self.client.get(reverse('sample_range'), data, HTTP_AUTHORIZATION='JWT {}'.format(access_token))
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        # print(response.json())
-        self.assertEqual(response.json()['data']['totalItems'], 2)
+        self.assertEqual(json.loads(response.content), good_data)        
 
         print('Test the DELETE method {"hive": 1, "sample_time": "2020-06-30T20:05:00Z"}')
         url = '/api/sample/?sample=2020-06-30T20:05:00.000Z&hive=1'
-        response = self.client.delete(url, {"hive": 1, "sample": "2020-06-30T20:05:00Z"}, HTTP_AUTHORIZATION='JWT {}'.format(access_token))
+        header = Token(user.username).create_auth_header(key_rsa)
+        response = client.delete(url, {"hive": 1, "sample": "2020-06-30T20:05:00Z"}, HTTP_AUTHORIZATION=header, format="json")
         # response = self.client.delete(url, HTTP_AUTHORIZATION='JWT {}'.format(access_token))
-        print(response.json())
+        # print(response.json())
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(Samples.objects.count(), 1)
 
-        print('Test the DELETE method {"hive": 1, "sample_time": "2020-04-13T11:53:12Z"}')
+        print('Test again the DELETE method {"hive": 1, "sample_time": "2020-04-13T11:53:12Z"}')
         url = '/api/sample/?sample=2020-04-13T11:53:12Z&hive=1'
-        #response = self.client.delete(url, {"hive": 1, "sample": "2020-06-30T20:05:00Z"})
-        response = self.client.delete(url, HTTP_AUTHORIZATION='JWT {}'.format(access_token))
+        header = Token(user.username).create_auth_header(key_rsa)
+        response = client.delete(url, HTTP_AUTHORIZATION=header, format="json")
         #print(response.content, response.status_code)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(Samples.objects.count(), 0)
 
-    def test_03_POST_GET_PUT_DELETE_hive(self):
+    def test_03_hive_POST_GET_PUT_DELETE(self):
         """ Testing interface /hive and /hive/<int:pk> """
         url = reverse('hive')
         print('\nTest NOT Authorized /hive POST method')
@@ -194,3 +198,87 @@ class SamplesTest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         # print(response.json())
         self.assertEqual(response.json()['data']['totalItems'], 0)
+
+    def test_04_GET_multiple_records(self):
+        """Test /samples interface for GETting multiple automatic aggregated samples 
+            The JWT RSA authentication is loaded from pub/priv key files
+        """
+        client = APIClient()
+        data = {"hive": 1, "sample1": "2020-04-01T00:05:00Z", "sample2": "2020-06-30T23:05:00Z"}
+        print('\nTest NOT Authorized multiple samples GET method %s' % data)
+        response = client.get(reverse('sample_range'), data)
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+        user = User.objects.create_user(username="foo")
+        user.save()
+        base = os.path.dirname(__file__)
+        pub_path = os.path.join(base, "test_fixtures/dummy_rsa.pub")
+        with open(pub_path) as f1:
+            exc, key_pub = RSAPublicKey.load_serialized_public_key(f1.read().encode())
+        if exc:
+            print(exc)
+        user_key_rsa = PublicKey.objects.create(
+            user=user, key=key_pub.as_pem.decode()
+        )
+        user_key_rsa.save()
+        # wite the encoded Public key to a file for inspection
+        pub_enc_path = os.path.join(base, "test_fixtures/dummy_pub_enc.bin")
+        with open(pub_enc_path, 'wb') as f1:
+            f1.write(key_pub.as_pem)
+        """ print(key_rsa.as_pem)
+        print(key_rsa.as_pem.decode()) """        
+        priv_path = os.path.join(base, "test_fixtures/dummy_rsa.privkey")
+        key_rsa = PrivateKey.load_pem_from_file(priv_path)
+        header = Token(user.username).create_auth_header(key_rsa)
+        # wite the token to a file for inspection
+        token_path = os.path.join(base, "test_fixtures/dummy_token.txt")
+        with open(token_path, 'w') as f1:
+            f1.write(header)
+
+        print('POST a valid record')
+        good_data = {"hive": 1, "sample_time": "2020-06-30T20:05:00Z", "temp_low": 28.823, 
+            "temp_high": None, "temp_hot": 31.663, "temp_out": 24, "temp_target": -10.000, 
+            "humi_in": 47.13, "humi_out": None, "heat_pwr": 0, "fan": 758, 
+            "mode": "monitor", "heater_breakers": 10}
+        response = client.post(reverse('sample'), good_data, HTTP_AUTHORIZATION=header, format='json')
+        #print(type(json.loads(response.content)), json.loads(response.content))
+        #print(type(response.data), response.data)
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(json.loads(response.content), good_data)
+        self.assertEqual(Samples.objects.count(), 1)
+
+        print('POST valid record (sample_time=1586778792)')
+        good_data2 = {"hive": 1, "sample_time": 1586778792, "temp_low": 28.823, 
+            "temp_high": None, "temp_hot": 31.663, "temp_out": 24, "temp_target": -10.000, 
+            "humi_in": 47.13, "humi_out": None, "heat_pwr": 0, "fan": 758, 
+            "mode": "monitor", "heater_breakers": 10}        
+        header = Token(user.username).create_auth_header(key_rsa)
+        response = client.post(reverse('sample'), good_data2, HTTP_AUTHORIZATION=header, format='json')
+        #print(type(json.loads(response.content)), json.loads(response.content))
+        #print(type(response.data), response.data)
+        #print(response.content)
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        #self.assertEqual(json.loads(response.content), good_data)
+        self.assertEqual(Samples.objects.count(), 2)
+
+        print('Create a test user')
+        user_url = reverse('create_user')
+        response = client.post(user_url, {"email": "test@test.com", "username": "test", "password": "test_pass"}, format="json")
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+        print('Get tokens') 
+        token_url = reverse('token_create')
+        response = client.post(token_url, {"username": "test", "password": "test_pass"}, format="json")
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        body = response.json()
+        # print(type(body), body)
+        # self.assertTrue('refresh' in body and 'access' in body)
+        access_token = body['access']
+
+        data = {"hive": 1, "sample1": "2020-04-01T00:05:00Z", "sample2": "2020-06-30T23:05:00Z"}
+        print('Test multiple samples GET method %s' % data)
+        response = client.get(reverse('sample_range'), data, HTTP_AUTHORIZATION='JWT {}'.format(access_token), format="json")
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        # print(response.json())
+        self.assertEqual(response.json()['data']['totalItems'], 2)
+    

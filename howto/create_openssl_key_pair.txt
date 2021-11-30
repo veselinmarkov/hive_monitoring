@@ -1,0 +1,5 @@
+# Generate an RSA private key, of size 2048, and output it to a file named key.pem
+openssl genrsa -out key.pem 2048
+
+# Extract the public key from the key pair
+openssl rsa -in key.pem -outform PEM -pubout -out public.pem

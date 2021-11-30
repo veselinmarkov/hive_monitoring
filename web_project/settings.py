@@ -5,6 +5,7 @@ ENV_FILE_LOCATION - define the location of the .env configuration file
 GOOGLE_CLOUD_PROJECT - project name in GCP. Set if the project is depolyed to GCP
 USE_CLOUD_SQL_AUTH_PROXY - True/False. Change the Mysql PORT to 5432 for using a proxy to GCP SQL
 SETTINGS_NAME - (default:'djangp_settings') name of the configuration secret in GCP 
+RUN_TEST - Setup a SQLite db for testing
 DEVELOP - True/False set the DEBUG flag in the Django project (must be False for production)
 """
 
@@ -13,6 +14,7 @@ import os
 import io
 import environ
 from datetime import timedelta
+import google.auth
 from google.cloud import secretmanager
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -33,6 +35,13 @@ if os.path.isfile(env_file):
     # Use a local secret file, if provided
     print('Load .env file')
     env.read_env(env_file)
+elif os.environ.get("RUN_TEST", None):
+    placeholder = (
+        f"SECRET_KEY=a\n"
+        "GS_BUCKET_NAME=None\n"
+        f"DATABASE_URL=sqlite://{os.path.join(BASE_DIR, 'db.sqlite3')}"
+    )
+    env.read_env(io.StringIO(placeholder))
 elif os.environ.get("GOOGLE_CLOUD_PROJECT", None):
     # Pull secrets from Secret Manager
     project_id = os.environ.get("GOOGLE_CLOUD_PROJECT")
@@ -53,7 +62,8 @@ SECRET_KEY = env("SECRET_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = (os.getenv("DEVELOP", False))
 
-ALLOWED_HOSTS = ['localhost','127.0.0.1', 'ed1f29b.online-server.cloud']
+# ALLOWED_HOSTS = ['localhost','127.0.0.1', 'ed1f29b.online-server.cloud']
+ALLOWED_HOSTS = ["*"]
 
 
 # Application definition
@@ -67,8 +77,9 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'web_project',
+    # 'web_project',
     'storages',
+    'asymmetric_jwt_auth',
 ]
 
 MIDDLEWARE = [
@@ -79,6 +90,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'asymmetric_jwt_auth.middleware.JWTAuthMiddleware',
 ]
 
 ROOT_URLCONF = 'web_project.urls'
@@ -104,13 +116,19 @@ WSGI_APPLICATION = 'web_project.wsgi.application'
 # Database
 DATABASES = {"default": env.db()}
 
+if not DATABASES["default"]["HOST"] and '/' in DATABASES["default"]["NAME"]:
+    s = DATABASES["default"]["NAME"]
+    p = s.rfind('/',0, len(s))
+    DATABASES["default"]["HOST"] = s[:p]
+    DATABASES["default"]["NAME"] = s[p+1:]
+
 # If the flag as been set, configure to use proxy
 if os.getenv("USE_CLOUD_SQL_AUTH_PROXY", None):
-    DATABASES["default"]["HOST"] = "localhost"
+    DATABASES["default"]["HOST"] = "127.0.0.1"
     DATABASES["default"]["PORT"] = 5432
 
-if not DATABASES['default']['HOST'] :
-    DATABASES['default']['HOST'] = 'localhost'
+""" if not DATABASES['default']['HOST'] :
+    DATABASES['default']['HOST'] = 'localhost' """
 
 print(DATABASES)
 
@@ -124,12 +142,6 @@ print(DATABASES)
         'HOST': 'localhost',
     }
 } """
-
-
-# If the flag as been set, configure to use proxy
-if os.getenv("USE_CLOUD_SQL_AUTH_PROXY", None):
-    DATABASES["default"]["HOST"] = "127.0.0.1"
-    DATABASES["default"]["PORT"] = 5432
 
 
 # Password validation
@@ -215,12 +227,12 @@ HIVEBOX = {
 
 REST_FRAMEWORK = {
     'COERCE_DECIMAL_TO_STRING': False,
-    'DEFAULT_PERMISSION_CLASSES': (
+    """ 'DEFAULT_PERMISSION_CLASSES': (
         'rest_framework.permissions.IsAuthenticated',
-    ),
+    ), """
     'DEFAULT_AUTHENTICATION_CLASSES': (
 'rest_framework_simplejwt.authentication.JWTAuthentication',
-    ),  # 
+    ),
 }
 
 SIMPLE_JWT = {

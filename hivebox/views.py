@@ -1,10 +1,9 @@
+import json
 from django.conf import settings
 from django.http.response import Http404
 from django.views.decorators.csrf import csrf_exempt
-from django.http import JsonResponse, HttpResponse
 import logging
 
-from rest_framework.serializers import Serializer
 from rest_framework.views import APIView
 
 from web_project import settings
@@ -12,16 +11,22 @@ from .models import SamplesH, Samples, SamplesRange, Hives
 from .serializers import SamplesH_seri, Samples_seri, UserSerializer, HivesSerializer
 from rest_framework.parsers import JSONParser
 from rest_framework.decorators import api_view, authentication_classes
-from rest_framework.decorators import permission_classes
 from rest_framework.response import Response
 from rest_framework import status
 from datetime import datetime
 from rest_framework import permissions
 from rest_framework_simplejwt.views import TokenObtainPairView
+from rest_framework_simplejwt import authentication
 from .serializers import MyTokenObtainPairSerializer
-from hivebox.permissions import IsAuthenticatedOrPOSTmethod
-from django.utils.decorators import method_decorator
 
+'''Setting the permissions in the class views!:
+    - Views that must authenticate using user/password keys:
+    permission_classes = (IsAuthenticated,)
+    authentication_classes = (JWTAuthentication,)
+
+    - Views that authenticates using asymmetric keys:
+    permission_classes = (IsAuthenticated,)
+'''
 
 logger = logging.getLogger(__name__)
 
@@ -62,9 +67,7 @@ HIVE_RETURN_TEMPLATE = {
 }
 
 
-""" @csrf_exempt
-@permission_classes([IsOwnerOrReadOnly])
-@api_view(['GET']) """
+# Allow GET using user/pass JWT
 class SamplesRangeView(APIView):
     '''Return multiple records based on the time interval beteen 
     sample1 and sample2 and hive parameters.
@@ -72,6 +75,8 @@ class SamplesRangeView(APIView):
     "settings.AGGREAGTE_THRESHOLD_HIGH or lower than AGGREGATE_THRESHOLD_LOW". 
     The aggreagtion steps are as follows:
     "no aggreagtion" -> "1min" -> "5min" -> "15min" -> "hourly" ->"6 hours" -> "daily" '''
+    permission_classes = (permissions.IsAuthenticated,)
+    authentication_classes = (authentication.JWTAuthentication,)
 
     @staticmethod
     def estimate_samples(date1, date2, aggr_step):
@@ -171,8 +176,8 @@ class SamplesRangeView(APIView):
         return Response(r)
 
 
+# NOT used in the moment; no path in the urls
 @csrf_exempt
-# @permission_classes([IsOwnerOrReadOnly])
 @api_view(['GET', 'POST', 'DELETE'])
 def SamplesHView(request, format=None):
 
@@ -225,12 +230,10 @@ def SamplesHView(request, format=None):
         return Response('Record deleted', status=status.HTTP_200_OK)
 
 
-""" @csrf_exempt
-@permission_classes([permissions.IsAuthenticatedOrReadOnly])
-@api_view(['GET', 'POST', 'DELETE']) """
-class SamplesView(APIView):
-    permission_classes = (IsAuthenticatedOrPOSTmethod,)
-    # authentication_classes = ()
+# Allow POST, GET, DELETE using asymmetric RSA
+class SampleView(APIView):
+    permission_classes = (permissions.IsAuthenticated,)
+    # authentication_classes = (authentication.JWTAuthentication,)
 
     @staticmethod
     def get_sample(request):
@@ -238,32 +241,17 @@ class SamplesView(APIView):
             return Response('Parameters sample and hive expected', status=status.HTTP_400_BAD_REQUEST)
         sampletime = request.GET['sample']
         hive = request.GET['hive']
+        # print(sampletime, hive)
         try:
             sample = Samples.objects.get(sample_time =sampletime, hive =hive)
+            # print('get_sample_stat_method', sample)
         except Samples.DoesNotExist:
             return Response('The requested record was not found', status=status.HTTP_204_NO_CONTENT)
         return sample
 
-    def get(self, request, format=None):
-        # sample = self.get_sample(request)
-        if 'sample' not in request.GET or 'hive' not in request.GET: 
-            return Response('Parameters sample and hive expected', status=status.HTTP_400_BAD_REQUEST)
-        sampletime = request.GET['sample']
-        hive = request.GET['hive']
-        try:
-            sample = Samples.objects.get(sample_time =sampletime, hive =hive)
-        except Samples.DoesNotExist:
-            return Response('The requested record was not found', status=status.HTTP_204_NO_CONTENT)
-        """ return sample
-        if isinstance(sample, Response):
-            return sample """
-        sample_seri = Samples_seri(sample)
-        #print(sample_seri.data)
-        return Response(sample_seri.data)
-        
-    def post(self, request, format=None):
-        #print('in POST')
-        #print(request.data)
+    def post(self, request, format=json):
+        """ print('in POST')
+        print('Print sample POST user:', request.user) """
         data = JSONParser().parse(request)
         if 'hive' not in data or 'sample_time' not in data:
             return Response('both "hive" and "sample_time" items are required', status=status.HTTP_400_BAD_REQUEST)
@@ -280,6 +268,23 @@ class SamplesView(APIView):
             return Response(sample_seri.validated_data, status=status.HTTP_201_CREATED)
         return Response(sample_seri.errors, status=status.HTTP_400_BAD_REQUEST)
         
+    def get(self, request, format=None):
+        sample = self.get_sample(request)
+        """ if 'sample' not in request.GET or 'hive' not in request.GET: 
+            return Response('Parameters sample and hive expected', status=status.HTTP_400_BAD_REQUEST)
+        sampletime = request.GET['sample']
+        hive = request.GET['hive']
+        try:
+            sample = Samples.objects.get(sample_time =sampletime, hive =hive)
+        except Samples.DoesNotExist:
+            return Response('The requested record was not found', status=status.HTTP_204_NO_CONTENT) """
+        # print(sample.sample_time)
+        if isinstance(sample, Response):
+            return sample
+        sample_seri = Samples_seri(sample)
+        # print(sample_seri.data)
+        return Response(sample_seri.data)
+        
     def delete(self, request, format=None):
         sample = self.get_sample(request)
         """ print(request.resolver_match.kwargs)
@@ -292,6 +297,7 @@ class SamplesView(APIView):
         except Samples.DoesNotExist:
             return Response('The requested record was not found', status=status.HTTP_204_NO_CONTENT) """
         # return sample
+        # print(sample)
         if isinstance(sample, Response):
             #print('Could not retreive the record')
             return sample
@@ -299,12 +305,13 @@ class SamplesView(APIView):
         return Response('Record deleted', status=status.HTTP_200_OK)
 
 
+# Allow GET for anonymous
 class ObtainTokenWithUserName(TokenObtainPairView):
     permission_classes = (permissions.AllowAny,)
     serializer_class = MyTokenObtainPairSerializer
 
 
-# @method_decorator(csrf_exempt, name='dispatch')
+# Allow POST for anonymous
 class UserCreate(APIView):
     permission_classes = (permissions.AllowAny,)
     authentication_classes = ()
@@ -319,9 +326,12 @@ class UserCreate(APIView):
         return Response(seri.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
+# Allow GET, POST for authenticated user/pass JWT
 class HivesView(APIView):
     ''' GET return a list of Hives which belongs to the user.
     POST requires {name: "hive_name"} in the body'''
+    permission_classes = (permissions.IsAuthenticated,)
+    authentication_classes = (authentication.JWTAuthentication,)
     
     def get(self, request, format=None):
         hives = Hives.objects.filter(user_id = request.user.id)
@@ -346,8 +356,11 @@ class HivesView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
+# Allow PUT, DELETE for authenticated user/pass JWT
 class HivesViewDetail(APIView):
     ''' PUT, DELETE require pk in url /hives/<pk>/'''
+    permission_classes = (permissions.IsAuthenticated,)
+    authentication_classes = (authentication.JWTAuthentication,)
     
     def get_object(self, pk):
         try:

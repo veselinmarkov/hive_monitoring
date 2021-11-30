@@ -1,14 +1,15 @@
 from django.conf.urls import url
 from django.urls import path
-from .views import SamplesHView, SamplesView, SamplesRangeView, UserCreate, \
+from .views import SampleView, SamplesRangeView, UserCreate, \
     ObtainTokenWithUserName, HivesView, HivesViewDetail
 from rest_framework.urlpatterns import format_suffix_patterns
 from rest_framework_simplejwt import views as jwt_views
 
 urlpatterns = [
-    path('sample/', SamplesView.as_view(), name='sample'),
+    # path('sample/detail/', SampleView.as_view(), name='sample_detail'),
+    path('sample/', SampleView.as_view(), name='sample'),
     path('samples/', SamplesRangeView.as_view(), name='sample_range'),
-    path('sample_hourly/', SamplesHView, name='sample_hourly'),
+    # path('sample_hourly/', SamplesHView, name='sample_hourly'),
     # path('user/', UserInfo.as_view(), name='user_info'),
     path('hive/', HivesView.as_view(), name='hive'),
     path('hive/<int:pk>/', HivesViewDetail.as_view(), name='hive_detail'),

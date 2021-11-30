@@ -1,0 +1,41 @@
+
+upstream app_server {
+    # fail_timeout=0 means we always retry an upstream even if it failed
+    # to return a good HTTP response
+
+    # for UNIX domain socket setups
+    server unix:/tmp/gunicorn.sock fail_timeout=0;
+
+    # for a TCP configuration
+    # server 192.168.0.7:8000 fail_timeout=0;
+  }
+
+server {
+       listen $PORT;
+       
+       server_name bee-comfort.com;
+
+        root /var/www/hivebox;
+        index index.html;
+
+        location / {
+                root /var/www/hivebox;
+                set $fallback_file /index.html;
+                if ($http_accept !~ text/html) {
+                        set $fallback_file /null;
+                }
+                try_files $uri $fallback_file;
+        }
+
+       location /api/ {
+               proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+                proxy_set_header X-Forwarded-Proto $scheme;
+                proxy_set_header Host $http_host;
+                # we don't want nginx trying to do something clever with
+                # redirects, we set the Host: header above already.
+                proxy_redirect off;
+                proxy_pass http://app_server;
+        #include         uwsgi_params;
+        #uwsgi_pass      unix:/tmp/gunicorn.sock;
+       }
+}

@@ -1,18 +1,24 @@
-FROM node:14-slim as build-stage
-COPY react_project/package*.json ./app/
-WORKDIR /app
-RUN npm install
-COPY react_project/ /app/
-RUN npm run build
+# Copyright 2020 Google LLC
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
 
-
+# Use an official lightweight Python image.
+# https://hub.docker.com/_/python
 FROM python:3.8-slim
 
 RUN apt-get update
 RUN apt-get --yes install gcc
 RUN apt-get --yes install python3-dev libmariadb-dev
-RUN apt-get --yes install nginx
-RUN apt-get -y install gettext-base
 
 ENV APP_HOME /app
 WORKDIR $APP_HOME
@@ -31,20 +37,10 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY uwsgi.ini .
 COPY hivebox hivebox
 COPY web_project web_project
-COPY manage.py .env*  ./
-COPY run_nginx_and_gunicorn.sh .
-RUN mkdir /var/www/hivebox && chmod +x run_nginx_and_gunicorn.sh
-COPY --from=build-stage /app/build/ /var/www/hivebox
-COPY hive_nginx /etc/nginx/sites-available
-#RUN ln -s /etc/nginx/sites-available/hive_nginx /etc/nginx/sites-enabled/hive_nginx
-RUN rm /etc/nginx/sites-enabled/default
-
-RUN export RUN_TEST=True && python manage.py test --settings=web_project.settings_test
+COPY manage.py .
 # Run the web service on container startup. Here we use the gunicorn
 # webserver, with one worker process and 8 threads.
 # For environments with multiple CPU cores, increase the number of workers
 # to be equal to the cores available.
 # Timeout is set to 0 to disable the timeouts of the workers to allow Cloud Run to handle instance scaling.
-# CMD exec gunicorn --bind 0.0.0.0:$PORT --workers 1 --threads 8 --timeout 0 web_project.wsgi:application
-# CMD ["nginx", "-g", "daemon off;"]
-CMD ./run_nginx_and_gunicorn.sh
+CMD exec gunicorn --bind 0.0.0.0:$PORT --workers 1 --threads 8 --timeout 0 web_project.wsgi:application

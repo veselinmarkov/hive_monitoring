@@ -60,7 +60,26 @@ export GOOGLE_CLOUD_PROJECT=optimum-harbor-303817
 wget https://dl.google.com/cloudsql/cloud_sql_proxy.linux.amd64 -O ~/.loval/bin/cloud_sql_proxy
 ../cloud_sql_proxy -instances="optimum-harbor-303817:europe-west3:hive"=tcp:5432
 
+# Test the build locally with docker
+docker build -t gcr.io/optimum-harbor-303817/hive-service .
 
 # Build the image at GCP
 gcloud builds submit --config cloudmigrate.yaml \
     --substitutions _INSTANCE_NAME=hive,_REGION=europe-west3
+
+#Unsuccessfull !
+#{'default': {'NAME': '/cloudsql/optimum-harbor-303817:europe-west3:hive/hive', 'USER': 'vesko', 'PASSWORD': 'Skoves40', 'HOST': '127.0.0.1', 'PORT': 5432, 'ENGINE': 'django.db.backends.mysql'}}
+
+#Deploy to GCP Run
+gcloud run deploy hive-service \
+    --platform managed \
+    --region europe-west3 \
+    --image gcr.io/optimum-harbor-303817/hive-service \
+    --add-cloudsql-instances optimum-harbor-303817:europe-west3:hive \
+    --allow-unauthenticated
+
+#Update if needed
+gcloud run deploy hive-service \
+    --platform managed \
+    --region europe-west3 \
+    --image gcr.io/optimum-harbor-303817/hive-service

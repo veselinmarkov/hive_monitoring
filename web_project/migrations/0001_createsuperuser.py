@@ -17,7 +17,7 @@ import os
 
 from django.contrib.auth.models import User
 from django.db import migrations
-from django.db.backends.postgresql.schema import DatabaseSchemaEditor
+from django.db.backends.mysql.schema import DatabaseSchemaEditor
 from django.db.migrations.state import StateApps
 
 import google.auth
