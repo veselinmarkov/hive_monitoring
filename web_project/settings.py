@@ -23,6 +23,7 @@ env = environ.Env(DEBUG=(bool, False))
 # env_file = os.path.join(BASE_DIR.parent, ".env")
 env_file = os.path.join(BASE_DIR, ".env")
 if os.environ.get('ENV_FILE_LOCATION', None):
+    print('ENV_FILE_LOCATION =%s' % (os.environ.get('ENV_FILE_LOCATION')))
     env_file = os.path.join(os.environ.get('ENV_FILE_LOCATION'), ".env")
 
 # Attempt to load the Project ID into the environment, safely failing on error.
@@ -130,7 +131,8 @@ if os.getenv("USE_CLOUD_SQL_AUTH_PROXY", None):
 """ if not DATABASES['default']['HOST'] :
     DATABASES['default']['HOST'] = 'localhost' """
 
-print(DATABASES)
+print('Database name=%s, Database host=%s, Database engine=%s' % (DATABASES["default"]["NAME"], 
+    DATABASES["default"]["HOST"], DATABASES["default"]["ENGINE"]))
 
 """ DATABASES = {
     'default': {
