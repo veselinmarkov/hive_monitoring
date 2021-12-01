@@ -20,11 +20,16 @@ from google.cloud import secretmanager
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 env = environ.Env(DEBUG=(bool, False))
-# env_file = os.path.join(BASE_DIR.parent, ".env")
-env_file = os.path.join(BASE_DIR, ".env")
-if os.environ.get('ENV_FILE_LOCATION', None):
+ENV_NAME = ".env"
+env_file = os.path.join(BASE_DIR, ENV_NAME)
+file_location = os.environ.get('ENV_FILE_LOCATION', None)
+if file_location:
     print('ENV_FILE_LOCATION =%s' % (os.environ.get('ENV_FILE_LOCATION')))
-    env_file = os.path.join(os.environ.get('ENV_FILE_LOCATION'), ".env")
+    if file_location[-len(ENV_NAME):] ==ENV_NAME:
+        # the file name (.env) appear at the end of the file_location
+        env_file = file_location
+    else:
+        env_file = os.path.join(os.environ.get('ENV_FILE_LOCATION'), ".env")
 
 # Attempt to load the Project ID into the environment, safely failing on error.
 try:
