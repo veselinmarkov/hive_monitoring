@@ -84,9 +84,13 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     # 'web_project',
-    'storages',
+    # 'storages',
     'asymmetric_jwt_auth',
 ]
+
+if os.environ.get("GOOGLE_CLOUD_PROJECT", None):
+    INSTALLED_APPS.append('web_project')
+    INSTALLED_APPS.append('storages')
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
