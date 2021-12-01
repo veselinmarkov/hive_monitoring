@@ -37,6 +37,7 @@ try:
 except google.auth.exceptions.DefaultCredentialsError:
     pass
 
+project_id = None
 if os.path.isfile(env_file):
     # Use a local secret file, if provided
     print('Load .env file')
@@ -88,9 +89,11 @@ INSTALLED_APPS = [
     'asymmetric_jwt_auth',
 ]
 
-if os.environ.get("GOOGLE_CLOUD_PROJECT", None):
+if project_id:
     INSTALLED_APPS.append('web_project')
     INSTALLED_APPS.append('storages')
+
+print(INSTALLED_APPS)
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
