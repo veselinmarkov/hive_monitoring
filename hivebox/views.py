@@ -250,8 +250,8 @@ class SampleView(APIView):
         return sample
 
     def post(self, request, format=json):
-        """ print('in POST')
-        print('Print sample POST user:', request.user) """
+        print('in POST')
+        print('Print sample POST user:', request.user)
         data = JSONParser().parse(request)
         if 'hive' not in data or 'sample_time' not in data:
             return Response('both "hive" and "sample_time" items are required', status=status.HTTP_400_BAD_REQUEST)
@@ -286,6 +286,7 @@ class SampleView(APIView):
         return Response(sample_seri.data)
         
     def delete(self, request, format=None):
+        print('In DELETE')
         sample = self.get_sample(request)
         """ print(request.resolver_match.kwargs)
         if 'sample' not in request.DELETE or 'hive' not in request.DELETE: 
