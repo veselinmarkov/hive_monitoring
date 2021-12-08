@@ -1,7 +1,7 @@
 // import { FormatLineSpacingRounded } from "@material-ui/icons"
 import {Container, Box, Typography, 
     List, ListItem, ListItemIcon, ListItemText} from '@material-ui/core';
-import MyFlower from '../pictures/flowers_wide.jpg';
+import BackFlower from '../pictures/flowers_wide_lowRes.jpg';
 import MyFlower_long from '../pictures/flowers_long.jpg';
 import MyBee from '../pictures/bee.jpg';
 import MyLogo from '../pictures/bee_logo_f4.svg' ;
@@ -17,10 +17,10 @@ const useStyles = makeStyles((theme) => ({
       borderRadius: "7px",
       //height: "100vh"
         //backgroundImage: "linear-gradient(rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0.5)),url('/static/media/beehive.471e8a0b.png')",
-        backgroundImage: `linear-gradient(rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.9)),url(${MyFlower})`,
-        backgroundRepeat: "no-repeat",
+        backgroundImage: `linear-gradient(rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.9)),url(${BackFlower})`,
+        /* backgroundRepeat: "no-repeat",
         backgroundPosition: "center center",
-        backgroundSize: "cover",
+        backgroundSize: "cover", */
         backgroundAttachment: "scroll",
     },
     container: {

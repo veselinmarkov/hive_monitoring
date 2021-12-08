@@ -25,7 +25,17 @@ export default function Navbar({user, handleUserChange}) { //{... , user_id, use
                 return;
             hivedb_refresh().then( result => {
                 handleUserChange( parseToken(result.data.refresh));
-            }).catch( err => setSnakMessage(err));
+            }).catch( err => {
+                // console.log(JSON.stringify(err))
+                if (err.message.includes('500')) {
+                    setSnakMessage('No connection with the server or server error');
+                } else {
+                    setSnakMessage(err.message);
+                }
+                handleUserChange(null);
+                hivedb_logout();
+                return
+            });
         }
     });
 
@@ -71,7 +81,7 @@ export default function Navbar({user, handleUserChange}) { //{... , user_id, use
                     Dashboard
                 </Button>
             }
-            <Button color="inherit">
+            <Button color="inherit" href="/who">
                 About us
             </Button>
             <Button color="inherit">

@@ -7,6 +7,7 @@ import {
 import Navbar from './components/Navbar'; 
 import FrontPage from './components/FrontPage';
 import Dashboard from './Dashboard';
+import Who from './components/Who'
 
 const theme = createTheme({
   palette: {
@@ -33,6 +34,9 @@ export default function App() {
       <Router>
         <Route exact path="/">
           <FrontPage/>
+        </Route>
+        <Route exact path="/who">
+          <Who/>
         </Route>
         <Route path="/dash">
           <Dashboard user={user}/>
