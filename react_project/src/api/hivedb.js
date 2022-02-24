@@ -19,24 +19,31 @@ const axiosInstance = axios.create({
     }
 });
 
-export async function getSamples(hive_id, timerange) {
-    if (! axiosInstance.defaults.headers['Authorization'] ) {
-    //authorization header not present or no user specified, probably not logged in
-        throw new Error({status: "401", statusText: "Not logged in"});
-    }
-    // const errorResponse = null;
-    let tryAgain = 3;
-    while (tryAgain >0) {
-        try {
-            return await axiosInstance.get('/api/samples/', { params: { sample1: timerange.begin(), 
-            sample2: timerange.end(), hive: hive_id}});
-        } catch (error) {
-            // console.log(JSON.stringify(error));
-            if (error.response.status !== 401)
-                throw Error(error);
+let getSamples = async (hive_id, timerange) => {
+    return await axiosInstance.get('/api/samples/', { params: { sample1: timerange.begin(), 
+        sample2: timerange.end(), hive: hive_id}});
+}
+
+let getHives = async () => {
+    return await axiosInstance.get('/api/hive/');
+}
+
+function register_wrapper(fn) {
+    async function return_function() {
+        if (! axiosInstance.defaults.headers['Authorization'] ) {
+        //authorization header not present or no user specified, probably not logged in
+            throw new Error({status: "401", statusText: "Not logged in"});
         }
-        // try {
-        // try to resfresh the token
+        let tryAgain = 3;
+        while (tryAgain >0) {
+            try {
+                return await fn(...arguments)
+            } catch (error) {
+                // console.log(JSON.stringify(error));
+                if (error.response.status !== 401)
+                    throw Error(error);
+            }
+            // try to resfresh the token
             console.log("Try to refresh the token");
             if (! sessionStorage.getItem('refresh_token'))
                 throw new Error({status: "401", statusText: "Not logged in"});
@@ -44,24 +51,19 @@ export async function getSamples(hive_id, timerange) {
             axiosInstance.defaults.headers['Authorization'] = 'JWT ' + response.data.access;
             sessionStorage.setItem('access_token', response.data.access);
             sessionStorage.setItem('refresh_token', response.data.refresh);
-        /* } catch (error) {
-            if (error.response.status !== 401)
-                return error.response;
-
-        } */
-        tryAgain -= 1;
+            tryAgain -= 1;
+        }
+        throw new Error({status: "500", statusText: "Connection give up after 3 attempts"});
     }
-    // return Promise((_, reject) => reject({status: "500", statusText: "Connection give up after 3 attempts"}))
-    throw new Error({status: "500", statusText: "Connection give up after 3 attempts"});
+    return return_function
 }
 
-/* export function getInfo() {
-    return axios.get('info/');
-}
+getSamples = register_wrapper(getSamples)
 
-export function saveRecord(record) {
-    return axios.post('card/', record);
-} */
+getHives = register_wrapper(getHives)
+
+export { getSamples, getHives }
+
 
 export async function refresh() {
     if (! sessionStorage.getItem('refresh_token'))

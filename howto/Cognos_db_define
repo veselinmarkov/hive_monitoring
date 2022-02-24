@@ -1,0 +1,77 @@
+Table MyDimDate
+
+dateid
+date
+year
+quarter
+quartername
+month
+monthname
+day
+weekday
+weekdayname
+
+CREATE TABLE MyDimDate(
+    dateid integer NOT NULL PRIMARY KEY,
+    date varchar(12) NOT NULL,
+    year integer NOT NULL,
+    quarter integer NOT NULL,
+    quartername varchar(2) NOT NULL,
+    month integer NOT NULL,
+    monthname varchar(10) NOT NULL,
+    day integer NOT NULL,
+    weekday integer NOT NULL,
+    weekdayname varchar(10) NOT NULL
+);
+
+
+Table MyDimWaste
+
+wasteid
+wastetype
+
+CREATE TABLE MyDimWaste(
+    wasteid integer NOT NULL PRIMARY KEY,
+    wastetype varchar(20) NOT NULL
+);
+
+
+Table MyDimZone
+
+zoneid
+zonename
+city
+
+CREATE TABLE MyDimZone(
+    zoneid integer NOT NULL PRIMARY KEY,
+    zonename varchar(20) NOT NULL,
+    city varchar(20) NOT NULL
+);
+
+Table MyFactTrips
+
+tripid
+dateid
+wasteid
+zoneid
+collected
+
+
+CREATE TABLE MyFactTrips(
+    tripid integer NOT NULL PRIMARY KEY,
+    dateid integer NOT NULL,
+    wasteid integer NOT NULL,
+    zoneid integer NOT NULL,
+    collected integer NOT NULL
+);
+
+ALTER TABLE MyFactTrips 
+ADD FOREIGN KEY (dateid) 
+REFERENCES MyDimDate (dateid);
+
+ALTER TABLE MyFactTrips 
+ADD FOREIGN KEY (wasteid) 
+REFERENCES MyDimWaste (wasteid);
+
+ADD FOREIGN KEY (zoneid) 
+REFERENCES MyDimZone (zoneid);

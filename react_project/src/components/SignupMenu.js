@@ -82,7 +82,7 @@ export default function SignupMenu({anchor, handleFeedBack, handleClose}) {
             else
                 setShowError1(response.error);
         else {
-            setShowError1('')
+            setShowError1('');
             setUsername1('');
             setPassword1('');
         }
@@ -92,6 +92,11 @@ export default function SignupMenu({anchor, handleFeedBack, handleClose}) {
         setShowError1('');
         setShowError2('');
         handleClose();
+    }
+
+    const handleGuest =() => {
+        setUsername1('Guest');
+        setPassword1('PublicGuestPass');
     }
 
     const handleFirstName = e => setFirstName(e.target.value);
@@ -125,8 +130,10 @@ export default function SignupMenu({anchor, handleFeedBack, handleClose}) {
                     <Button onClick={handleLogin} variant="contained" color="primary">
                         Login
                     </Button>
+                    <Typography variant='subtitle1' color="secondary" 
+                        style={{alignSelf: "flex-end"}} onClick={handleGuest}>login as a Guest</Typography>
 
-                    <Divider variant="middle" style={{marginTop: "30px", marginBottom: "30px"}}/>
+                    <Divider variant="middle" style={{marginTop: "15px"}}/>
                     <Typography style={{alignSelf: "flex-end"}}>or Sign up</Typography>
                     <Input className={classes.inputText} placeholder="First Name"
                         onChange={handleFirstName} value={firstName}/>

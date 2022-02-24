@@ -60,4 +60,4 @@ class UserSerializer(ModelSerializer):
 class HivesSerializer(ModelSerializer):
     class Meta:
         model = Hives
-        fields = ['id', 'user', 'group', 'name']
+        fields = ['hive_id', 'user', 'group', 'name']

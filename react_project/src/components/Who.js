@@ -1,5 +1,5 @@
 import React from 'react'
-import { Container, Box, Typography } from '@material-ui/core';
+import { Container, Box, Typography, Divider } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles'; 
 
 import BackFlower from '../pictures/flowers_wide_lowRes.jpg';
@@ -9,18 +9,18 @@ import VeskoPicture from '../pictures/Vesko_picture.jpg';
 
 const employees = [
     { "id": 1,
+        "name": "Mityu Mitev",
+        "role": "Concept, architecture and hardware definition of the product",
+        "experience": " Analog design engineer",
+        "picture": ManPicture,
+        "email": "mityu_mitev@yahoo.com",
+    },
+    { "id": 2,
         "name": "Ilia Krastev",
         "role": "Embedded developer",
         "experience": "Long experienced Software developer in various projects",
         "picture": ManPicture,
         "email": "ikrustev@gmail.com",
-    },
-    { "id": 2,
-        "name": "Mityu Mitev",
-        "role": "Initial Concept, Electronics design",
-        "experience": " Analog design engineer",
-        "picture": ManPicture,
-        "email": "mityu_mitev@yahoo.com",
     },
     { "id": 3,
         "name": "Veselin Markov",
@@ -77,10 +77,10 @@ export default function Who() {
     return (
         <Container component="main" maxWidth="lg" className={classes.rootContainer}>
             <Box className={classes.container}>
-            {employees.map(emp => ( 
+            {employees.map(emp => (
                 <Box className={classes.person} key={emp.id}>                
                     {Boolean(emp.id % 2) && <img alt={emp.name} src={emp.picture} width="130"/> }
-                    <Box sx={{margin: "20px", minWidth: "450px",}}> 
+                    <Box sx={{margin: "20px", minWidth: "300px",}}> 
                     <   Typography gutterBottom variant="h5" component="div">
                             {emp.name}
                         </Typography>
@@ -91,10 +91,10 @@ export default function Who() {
                             <Typography component="span" variant="body1" color="textPrimary">Experience: </Typography> 
                             {emp.experience}
                         </Typography>
-                        <Typography variant="body2" color="textSecondary">
+                        {/* <Typography variant="body2" color="textSecondary">
                             <Typography component="span" variant="body1" color="textPrimary">e-mail: </Typography> 
                             {emp.email}
-                        </Typography>
+                        </Typography> */}
                     </Box>                
                     {Boolean((emp.id +1) % 2) && <img alt={emp.name} src={emp.picture} width="130"/> }
                 </Box>

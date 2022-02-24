@@ -56,11 +56,11 @@ export default function Control({id, unitList, handleIdChange}) {
         <div className={classes.sidebar}>
             {unitList.map(element => {
                 return (<Card className={classes.card} 
-                    onClick={handleClick} key={element.id} id={element.id}>
+                    onClick={handleClick} key={element.hive_id} id={element.hive_id}>
                     <CardActionArea>
                     <CardHeader 
                       avatar={<HomeOutlined />} 
-                      title={element.text}
+                      title={element.name}
                       className={ (element.id === id) ? classes.cardMarker : classes.empty}
                       /*
                       action={

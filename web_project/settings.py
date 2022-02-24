@@ -265,3 +265,7 @@ SIMPLE_JWT = {
     'AUTH_TOKEN_CLASSES': ('rest_framework_simplejwt.tokens.AccessToken',),
     'TOKEN_TYPE_CLAIM': 'token_type',
 }
+
+ASYMMETRIC_JWT_AUTH = {
+    'NONCE_BACKEND' : 'asymmetric_jwt_auth.nonce.null.NullNonceBackend'
+}

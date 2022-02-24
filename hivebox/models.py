@@ -84,6 +84,7 @@ class HiveGroups(models.Model):
 class Hives(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     group = models.ForeignKey(HiveGroups, null=True, on_delete=models.SET_NULL)
+    hive_id = models.IntegerField(blank=False, null=False)
     name = models.CharField(max_length=44, blank=False, null=False)
 
     class Meta:

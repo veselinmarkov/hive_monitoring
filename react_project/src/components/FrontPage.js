@@ -50,7 +50,7 @@ export default function FrontPage() {
     const classes = useStyles();
 
     const introLines = [
-        { "id": 1, "text": "Continuous beehive climate supervision and control through Internet" },
+        { "id": 1, "text": "Continuous beehive climate supervision and control through Internet" }, 
         { "id": 2, "text": "Keeping optimal temperature and humidity for the bee colony during the winter period" },
         { "id": 3, "text": "Protection of the bee colony and its brood during the cold spring turnovers" },
         { "id": 4, "text": "Beehive sound transmission to the beekeeper and its recording" },

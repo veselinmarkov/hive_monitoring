@@ -40,7 +40,7 @@ export function ResultTimeChart({hive_id}) {    // user_id, hive_id,
         if (activeDelay) 
         // do not access server until delay in progress
             return;
-        console.log('Effect invoked');
+        console.log('Charts Effect invoked');
         setActiveQuery(true);
         getSamples(hive_id, timerange).then((retData) => {
             //updataData = false;

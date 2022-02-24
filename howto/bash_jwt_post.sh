@@ -9,10 +9,14 @@ fi
 JWT=$(./build_jwt_2.sh 1)
 #echo $JWT
 curl --header "Content-Type: application/json" --header "Authorization: JWT ${JWT}" \
--d '{"hive": 9, "sample_time": "2020-06-30T20:05:00Z", "temp_low": "28.823", "temp_high": null, "temp_hot": "31.663", "temp_out": 24, "temp_target": "-10.000", "humi_in": "47.13", "humi_out": null, "heat_pwr": 0, "fan": 758, "mode": "monitor", "heater_breakers": 10}' -v \
+-d '{"hive":1, "time_stamp":"2020-06-30T20:05:00Z", "t_heated_air":32.69, "t_hive_air":0.00, 
+            "t_ambient_air":23.81, "fan_frequency":2233, "heater_power":0, "heater_register":0, 
+            "heater_pwm":0, "t_target":9.00, "heating_mode":"monitor", "pid_previous_deviation":0.00, 
+            "pid_deviation":0.00, "pid_integral":0.00, "pid_derivative":0.00, "pid_output":0.00, 
+            "humidity_hive_air":0.00, "t_hive_ceiling":33.38, "heater_breakers":10}' -v \
 "${HOST}/api/sample/"
 
 
 JWT=$(./build_jwt_2.sh 2)
 curl -X DELETE --header "Content-Type: application/json" --header "Authorization: JWT ${JWT}" -v \
-"${HOST}/api/sample/?sample=2020-06-30T20:05:00.000Z&hive=9"
+"${HOST}/api/sample/?sample=2020-06-30T20:05:00.000Z&hive=1"

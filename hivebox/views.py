@@ -1,5 +1,8 @@
 import json
 from django.conf import settings
+# from django.forms import ValidationError
+from rest_framework.exceptions import ValidationError
+from rest_framework.utils.serializer_helpers import ReturnDict
 from django.http.response import Http404
 from django.views.decorators.csrf import csrf_exempt
 import logging
@@ -80,7 +83,7 @@ class SamplesRangeView(APIView):
 
     @staticmethod
     def estimate_samples(date1, date2, aggr_step):
-        #date1, date2 are datetime objects
+        #date1, date2 are datetime objects 
         assert(aggr_step >=0)
         assert(aggr_step < len(AGGR_PERIOD))
         delta_sec = (date2 - date1).total_seconds()
@@ -229,11 +232,22 @@ def SamplesHView(request, format=None):
         sample.delete()
         return Response('Record deleted', status=status.HTTP_200_OK)
 
+# example of sample JSON
+# {"hive":1, "time_stamp":1599596661, "t_heated_air":32.69, "t_hive_air":0.00, "t_ambient_air":23.81, 
+#   "fan_frequency":2233, "heater_power":0, "heater_register":0, "heater_pwm":0, "t_target":9.00, 
+#   "heating_mode":"monitor", "pid_previous_deviation":0.00, "pid_deviation":0.00, 
+#   "pid_integral":0.00, "pid_derivative":0.00, "pid_output":0.00, "humidity_hive_air":0.00, 
+# "t_hive_ceiling":33.38, "heater_breakers":10}
 
 # Allow POST, GET, DELETE using asymmetric RSA
 class SampleView(APIView):
     permission_classes = (permissions.IsAuthenticated,)
     # authentication_classes = (authentication.JWTAuthentication,)
+    column_map = {"hive":"hive", "time_stamp":"sample_time", "t_heated_air":"temp_hot", 
+    "t_hive_air":"temp_low", "t_ambient_air":"temp_out", "fan_frequency":"fan", 
+    "heater_power":"heat_pwr", "t_target":"temp_target", "heating_mode":"mode", 
+    "humidity_hive_air":"humi_in", "humidity_ambient_air":"humi_out", "t_hive_ceiling":"temp_high", 
+    "heater_breakers":"heater_breakers"}
 
     @staticmethod
     def get_sample(request):
@@ -250,9 +264,11 @@ class SampleView(APIView):
         return sample
 
     def post(self, request, format=json):
-        print('in POST')
-        print('Print sample POST user:', request.user)
-        data = JSONParser().parse(request)
+        # print('in POST')
+        # print('Print sample POST user:', request.user)
+        l_dict = JSONParser().parse(request)
+        data = { self.column_map[x]:l_dict[x] for x in filter(lambda i: (i in self.column_map) 
+        and (type(l_dict[i]) !=str or l_dict[i].upper() != 'NAN'), l_dict)}
         if 'hive' not in data or 'sample_time' not in data:
             return Response('both "hive" and "sample_time" items are required', status=status.HTTP_400_BAD_REQUEST)
         try:
@@ -263,9 +279,17 @@ class SampleView(APIView):
             data['sample_time'] = datetime.utcfromtimestamp(timestamp).strftime('%Y-%m-%dT%H:%M:%SZ')
         #print(data)
         sample_seri = Samples_seri(data =data)
-        if sample_seri.is_valid():
-            sample_seri.save()
-            return Response(sample_seri.validated_data, status=status.HTTP_201_CREATED)
+        try:
+            if sample_seri.is_valid(raise_exception=True):
+                sample_seri.save()
+                return Response('', status=status.HTTP_201_CREATED)
+        except ValidationError as e:
+            # print('In Validation error', e.detail, e.detail.items())
+            if 'code=\'unique\'' in str(e):
+                return Response('Primary key fail, insert ignored', status=status.HTTP_200_OK)
+            """ else:
+                print('Warning: A ValidationError is raised probably due to unique constarint breached, \
+                    but the error message does not contain code=unique') """
         return Response(sample_seri.errors, status=status.HTTP_400_BAD_REQUEST)
         
     def get(self, request, format=None):
@@ -286,7 +310,7 @@ class SampleView(APIView):
         return Response(sample_seri.data)
         
     def delete(self, request, format=None):
-        print('In DELETE')
+        # print('In DELETE')
         sample = self.get_sample(request)
         """ print(request.resolver_match.kwargs)
         if 'sample' not in request.DELETE or 'hive' not in request.DELETE: 
@@ -330,12 +354,12 @@ class UserCreate(APIView):
 # Allow GET, POST for authenticated user/pass JWT
 class HivesView(APIView):
     ''' GET return a list of Hives which belongs to the user.
-    POST requires {name: "hive_name"} in the body'''
+    POST requires {name: "hive_name", hive_id: "id"} in the body'''
     permission_classes = (permissions.IsAuthenticated,)
     authentication_classes = (authentication.JWTAuthentication,)
     
     def get(self, request, format=None):
-        hives = Hives.objects.filter(user_id = request.user.id)
+        hives = Hives.objects.filter(user = request.user.id)
         serializer = HivesSerializer(hives, many=True)
         r = HIVE_RETURN_TEMPLATE.copy() 
         r['user'] = request.user.id
@@ -346,10 +370,11 @@ class HivesView(APIView):
     def post(self, request, format=None):
         # data = request.data
         data = JSONParser().parse(request)
-        """ print(type(request.user), request.user)
-        print(type(request.data), request.data)
-        data = {**(request.data), "user": request.user.id} """
+        # print(type(request.user), request.user)
+        # print(type(request.data), request.data)
+        # data = {**(request.data), "user": request.user.id}
         data["user"] = request.user.id
+        # print(data)
         serializer = HivesSerializer(data=data)
         if serializer.is_valid():
             serializer.save()
@@ -363,23 +388,27 @@ class HivesViewDetail(APIView):
     permission_classes = (permissions.IsAuthenticated,)
     authentication_classes = (authentication.JWTAuthentication,)
     
-    def get_object(self, pk):
+    def get_object(self, pk, user_id):
         try:
-            return Hives.objects.get(pk=pk)
+            return Hives.objects.get(user = user_id, hive_id =pk)
         except Hives.DoesNotExist:
             raise Http404
 
     def put(self, request, pk, format=None):
         # print('Hello from /hive PUT %s' % pk)
-        hive = self.get_object(pk)
-        serializer = HivesSerializer(hive, data=request.data)
+        data = request.data.copy()
+        hive = self.get_object(pk, request.user.id)
+        data["user"] = request.user.id
+        data["hive_id"] = pk
+        # print(hive)
+        serializer = HivesSerializer(hive, data=data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def delete(self, request, pk, format=None):
-        hive = self.get_object(pk)
+        hive = self.get_object(pk, request.user.id)
         hive.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
