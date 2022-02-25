@@ -267,5 +267,6 @@ SIMPLE_JWT = {
 }
 
 ASYMMETRIC_JWT_AUTH = {
-    'NONCE_BACKEND' : 'asymmetric_jwt_auth.nonce.null.NullNonceBackend'
+    'NONCE_BACKEND' : 'asymmetric_jwt_auth.nonce.null.NullNonceBackend',
+    'TIMESTAMP_TOLERANCE' : 120
 }
