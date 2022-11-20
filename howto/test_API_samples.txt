@@ -1,0 +1,9 @@
+# login and obtain the access token. Copy the access token to the next request
+
+curl -d '{"username":"reader","password":"XXXXXXX"}' \
+-H "Content-Type: application/json" -X POST https://bee-comfort.com/api/token/obtain/
+
+
+curl -H "Content-Type: application/json" \
+-H "Authorization: JWT eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNjY4OTczMDkyLCJpYXQiOjE2Njg5NzI3OTIsImp0aSI6IjI1MzA0NjljN2IyNjQ0OGY4OGE5ZGM5MDEyZjRlYzFiIiwidXNlcl9pZCI6MywidXNlcl9uYW1lIjoicmVhZGVyIn0.dWD4I8zcpYfB7FwrEscSZUxqEVaZzYsdAdLtIv1bI_w" \
+'https://bee-comfort.com/api/samples/?hive=7&sample1=2022-10-01T00:05:00Z&sample2=2022-11-20T23:05:00Z' -v -o res.txt

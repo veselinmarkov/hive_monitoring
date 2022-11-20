@@ -42,7 +42,7 @@ AGGR_STR = ["",
     "concat(date_format(sample_time, '%%Y-%%m-%%d %%H:'),lpad(floor(minute(sample_time)/5)*5, 2, '0'))",
     "concat(date_format(sample_time, '%%Y-%%m-%%d %%H:'),lpad(floor(minute(sample_time)/15)*15, 2, '0'))",
     "date_format(sample_time, '%%Y-%%m-%%d %%H:00:00')",
-    "concat(date_format(sample_time, '%%Y-%%m-%%d '),lpad(floor(hour(sample_time)/6)*6, 2, '0'))",
+    "concat(date_format(sample_time, '%%Y-%%m-%%d '),lpad(floor(hour(sample_time)/6)*6, 2, '0'), ':00')",
     "date_format(sample_time, '%%Y-%%m-%%d')"
 ]
 AGGR_NAMES = ['20s','1m', '5m', '15m', '1h', '6h', '1d']

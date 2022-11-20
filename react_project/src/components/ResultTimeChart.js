@@ -13,6 +13,22 @@ import {
     LineChart,
 } from "react-timeseries-charts";
 import { getSamples } from '../api/hivedb';
+import { TimeRangeBar } from './TimeRangeBar';
+ 
+// Metrics "temp_low", "temp_high", "temp_out", "heat_pwr", "temp_hot", "humi_in", "humi_out"
+const customColorsList = {
+    "temp_low": "#1f77b4", 
+    "temp_high": "#ff7f0e",
+    "temp_out": "#aec7e8",
+    "heat_pwr": "#d62728", 
+    "temp_hot": "#ffbb78",
+    "humi_in": "#2ca02c",
+    "humi_out": "#98df8a", 
+    /*"#d62728", "#ff9896", "#9467bd", "#c5b0d5",
+    "#8c564b", "#c49c94", "#e377c2", "#f7b6d2", "#7f7f7f",
+    "#c7c7c7", "#bcbd22", "#dbdb8d", "#17becf", "#9edae5"
+    */
+};
 
 const useStyles = makeStyles((theme) => ({
     rootContainer: {
@@ -26,8 +42,13 @@ const useStyles = makeStyles((theme) => ({
 
 export function ResultTimeChart({hive_id}) {    // user_id, hive_id, 
     const classes = useStyles();
-    //new TimeRange(date.setFullYear( date.getFullYear() - 1 ) , new Date())
-    const [timerange, setTimerange] = useState(new TimeRange(new Date('2020-01-03T08:00:00'), new Date('2020-01-03T09:00:00')));
+    let date = new Date();
+    date.setDate( date.getDate() - 3 );
+    const [timerange, setTimerange] = useState(new TimeRange(date , new Date()));
+    //let date = new Date('2020-02-15T09:00:00');
+    //date.setDate( date.getDate() - 365 );
+    //const [timerange, setTimerange] = useState(new TimeRange(date , new Date('2020-02-15T09:00:00')));
+    //const [timerange, setTimerange] = useState(new TimeRange(new Date('2020-01-03T08:00:00'), new Date('2020-01-03T09:00:00')));
     const [data, setData] = React.useState({"items":[], "aggregation": "1m", "totalItems": 0});
     const [tracker, setTracker] = React.useState({tracker: null, trackerEvent: null, trackerX: null});
     const [activeDelay, setActiveDelay] = useState(false)
@@ -37,7 +58,7 @@ export function ResultTimeChart({hive_id}) {    // user_id, hive_id,
     //let series = {}
 
     useEffect( () => {
-        if (activeDelay) 
+        if (activeDelay || ! hive_id) 
         // do not access server until delay in progress
             return;
         console.log('Charts Effect invoked');
@@ -48,10 +69,13 @@ export function ResultTimeChart({hive_id}) {    // user_id, hive_id,
             setActiveQuery(false);
         }).catch(err => {
             console.log({location: "ResultTimeChart; getSamples return", error: err});
-            setData(null);
+            setData({"items":[], "aggregation": "1m", "totalItems": 0});
             setActiveQuery(false);
         })
       }, [hive_id, activeDelay, timerange]);
+
+    if (! hive_id )
+      return (<h2>Please, choose a unit to display statistics</h2>);
 
     if (! data || data.length === 0)
         return (<h2>No data</h2>);
@@ -60,13 +84,16 @@ export function ResultTimeChart({hive_id}) {    // user_id, hive_id,
 
     const series = new TimeSeries({
         name: "Bio Unit statistics",
-        columns: ["index", "temp_low", "temp_high", "heat_pwr", "temp_out"],
+        columns: ["index", "temp_low", "temp_high", "temp_out", "heat_pwr", "temp_hot", "humi_in", "humi_out"],
         points: data.items.map((rec) => [
             Index.getIndexString(data.aggregation, new Date(rec.sample_time)),
             rec.temp_low,
             rec.temp_high,
-            rec.heat_pwr,
             rec.temp_out,
+            rec.heat_pwr,
+            rec.temp_hot,
+            rec.humi_in,
+            rec.humi_out,
         ])
     });
    
@@ -113,34 +140,102 @@ export function ResultTimeChart({hive_id}) {    // user_id, hive_id,
         });
     };
 
+    
+    // create LineChart styles for every temperature color
+    const line_styles = Object.assign({}, ...Object.entries(customColorsList).map(([k, v])=> (
+        { 
+            [k]: {
+                [k]: { 
+                    normal: {
+                        stroke: v,
+                        strokeWidth: 2,
+                        opacity: 0.5
+                    }
+                }
+            }
+        }
+    )));
+
+    /*
     const markerStyle = {
         backgroundColor: 'rgba(255, 255, 255, 0.8)',
         color: "#AAA",
         marginLeft: "5px"
     }
+    */
+    // create marker color styles for every temperature color, using example markerStyle above
+    const markerStyle = Object.assign({}, ...Object.entries(customColorsList).map(([k, v])=> (
+        { 
+            [k]: {
+                backgroundColor: 'rgba(255, 255, 255, 0.8)',
+                color: v,
+                marginLeft: "5px"
+            }
+        }
+    )));
+
+    function my_min(arr) {
+        let min_val = Number.MAX_VALUE
+        for (const v of arr) {
+            if (! isNaN(v) && (v < min_val))
+                min_val = v;
+        }
+        return min_val
+    }
+
+    function my_max(arr) {
+        let max_val = Number.MIN_VALUE
+        for (const v of arr) {
+            if (! isNaN(v) && (v > max_val))
+                max_val = v;
+        }
+        return max_val
+    }
+
+    const updateLastDays = (event, days) => {
+        console.log("In updateLastDays:", days);
+        let date = new Date();
+        date.setDate( date.getDate() - days );
+        setTimerange(new TimeRange(date , new Date()));
+    }
 
     return (
         <React.Fragment>
-        <Typography variant="h6">
+        <Typography variant="subtitle1">
             Time period:{timerange.begin().toLocaleString()} - {timerange.end().toLocaleString()}
         </Typography>
-        <Typography variant="h6">
+        <Typography variant="subtitle1">
             Granularity: {data.aggregation}, Samples: {data.totalItems} {tracker.tracker ? ", Marker: "+tracker.tracker.toLocaleString() : ""}
         </Typography>
+        <TimeRangeBar handleRangeChange = {updateLastDays}/>
         { tracker.trackerEvent ?
             <div style={{position: 'relative'}}>
                 <div style={{position: 'absolute', left: tracker.trackerX, top: '30px'}}>
-                    <div style={markerStyle}>Temp low: {Number(tracker.trackerEvent.get('temp_low')).toFixed(2)}</div>
+                    <div style={markerStyle["temp_low"]}>Temp low: {Number(tracker.trackerEvent.get('temp_low')).toFixed(2)}</div>
+                    <div style={markerStyle["temp_high"]}>Temp high: {Number(tracker.trackerEvent.get('temp_high')).toFixed(2)}</div>
+                    <div style={markerStyle["temp_out"]}>Temp out: {Number(tracker.trackerEvent.get('temp_out')).toFixed(2)}</div>
                 </div>
                 <div style={{position: 'absolute', left: tracker.trackerX, top: '160px' }}>
-                    <div style={markerStyle}>Temp high: {Number(tracker.trackerEvent.get('temp_high')).toFixed(2)}</div>
+                    <div style={markerStyle["heat_pwr"]}>Heat pwr: {Number(tracker.trackerEvent.get('heat_pwr')).toFixed(2)}</div>
                 </div>
                 <div style={{position: 'absolute', left: tracker.trackerX, top: '290px' }}>
-                    <div style={markerStyle}>Power: {Number(tracker.trackerEvent.get('heat_pwr')).toFixed(2)}</div>
+                    <div style={markerStyle["temp_hot"]}>Temp hot: {Number(tracker.trackerEvent.get('temp_hot')).toFixed(2)}</div>
                 </div>
                 <div style={{position: 'absolute', left: tracker.trackerX, top: '420px' }}>
-                    <div style={markerStyle}>Temp out: {Number(tracker.trackerEvent.get('temp_out')).toFixed(2)}</div>
+                    <div style={markerStyle["humi_in"]}>Humi in: {Number(tracker.trackerEvent.get('humi_in')).toFixed(2)}</div>
+                    <div style={markerStyle["humi_out"]}>Humi out: {Number(tracker.trackerEvent.get('humi_out')).toFixed(2)}</div>
                 </div>
+                {/*
+                <div style={{position: 'absolute', left: tracker.trackerX, top: '550px' }}>
+                    <div style={markerStyle["temp_low"]}>Hot air: {Number(tracker.trackerEvent.get('temp_hot')).toFixed(2)}</div>
+                </div>
+                <div style={{position: 'absolute', left: tracker.trackerX, top: '680px' }}>
+                    <div style={markerStyle["temp_low"]}>Humi in: {Number(tracker.trackerEvent.get('humi_in')).toFixed(2)}</div>
+                </div>
+                <div style={{position: 'absolute', left: tracker.trackerX, top: '810px' }}>
+                    <div style={markerStyle["temp_low"]}>Humi out: {Number(tracker.trackerEvent.get('humi_out')).toFixed(2)}</div>
+                </div>
+                */}
             </div>
         : null }
         <Box sx={{minHeight:5}}>
@@ -151,7 +246,7 @@ export function ResultTimeChart({hive_id}) {    // user_id, hive_id,
         <ChartContainer timeRange={series ? timerange: null} 
             trackerPosition={tracker.tracker}
             onTrackerChanged={handleTrackerChanged}
-            title="Temperature statistics over the past month" 
+            title="Hive Metrics" 
             //format="day" 
             utc={false}
             //padding ={0}
@@ -160,25 +255,45 @@ export function ResultTimeChart({hive_id}) {    // user_id, hive_id,
             >
             <ChartRow height="130">
                 <YAxis
-                    id="temp_low"
+                    id="temp_all"
                     label="deg"
-                    min={series.min("temp_low")}
-                    max={series.max("temp_low")}
+                    min={my_min([series.min("temp_out"), series.min("temp_low"), series.min("temp_high")])}
+                    max={my_max([series.max("temp_out"), series.max("temp_low"), series.max("temp_high")])}
                     format=".2f"
                     width="70"
                     type="linear"
                 />
                 <Charts>
                     <LineChart
-                        axis="temp_low"
+                        axis="temp_all"
                         //style={{success: {normal: {fill: "#e34d7d"}}}}
+                        style = {line_styles["temp_low"]}
                         spacing={5}
                         columns={["temp_low"]}
                         series={series}
                         //radius={5.0}
                     />
+                    <LineChart
+                        axis="temp_all"
+                        //style={{success: {normal: {fill: "#e34d7d"}}}}
+                        style = {line_styles["temp_high"]}
+                        spacing={5}
+                        columns={["temp_high"]}
+                        series={series}
+                        radius={5.0}
+                    />
+                    <LineChart
+                        axis="temp_all"
+                        //style={{success: {normal: {fill: "#e34d7d"}}}}
+                        style = {line_styles["temp_out"]}
+                        spacing={5}
+                        columns={["temp_out"]}
+                        series={series}
+                        radius={5.0}
+                    />
                 </Charts>
-            </ChartRow>            
+            </ChartRow>     
+            {/*       
             <ChartRow height="130">
                 <YAxis
                     id="temp_high"
@@ -200,6 +315,7 @@ export function ResultTimeChart({hive_id}) {    // user_id, hive_id,
                     />
                 </Charts>
             </ChartRow>
+        */}
             <ChartRow height="130">
                 <YAxis
                     id="heat_power"
@@ -211,20 +327,12 @@ export function ResultTimeChart({hive_id}) {    // user_id, hive_id,
                     type="linear"
                 />
                 <Charts>
-                    {/* <LineChart
-                        axis="heat_power"
-                        //style={{success: {normal: {fill: "#e34d7d"}}}}
-                        spacing={5}
-                        columns={["heat_pwr"]}
-                        series={series}
-                        //radius={5.0}
-                    /> */}
                     <BarChart
                         axis="heat_power"
-                        style={{heat_pwr: {normal: {fill: "#e34d7d"}}}}
+                        //style={{heat_pwr: {normal: {fill: "#e34d7d"}}}}
+                        style = {line_styles["heat_pwr"]}
                         spacing={5}
                         columns={["heat_pwr"]}
-                        //style={upDownStyle}
                         series={series}
                         //radius={5.0}
                     />
@@ -232,20 +340,49 @@ export function ResultTimeChart({hive_id}) {    // user_id, hive_id,
             </ChartRow>        
             <ChartRow height="130">
                 <YAxis
-                    id="temp_out"
+                    id="temp_hot"
                     label="deg"
-                    min={series.min("temp_out")}
-                    max={series.max("temp_out")}
+                    min={series.min("temp_hot")}
+                    max={series.max("temp_hot")}
                     format=".2f"
                     width="70"
                     type="linear"
                 />
                 <Charts>
                     <LineChart
-                        axis="temp_out"
-                        //style={{success: {normal: {fill: "#e34d7d"}}}}
+                        axis="temp_hot"
+                        style={line_styles["temp_hot"]}
                         spacing={5}
-                        columns={["temp_out"]}
+                        columns={["temp_hot"]}
+                        series={series}
+                        radius={5.0}
+                    />
+                </Charts>
+            </ChartRow>
+            <ChartRow height="130">
+                <YAxis
+                    id="humi_in"
+                    label="%"
+                    min={my_min([series.min("humi_in"), series.min("humi_out")])}
+                    max={my_max([series.max("humi_in"), series.max("humi_out")])}
+                    format=".2f"
+                    width="70"
+                    type="linear"
+                />
+                <Charts>
+                    <LineChart
+                        axis="humi_in"
+                        style={line_styles["humi_in"]}
+                        spacing={5}
+                        columns={["humi_in"]}
+                        series={series}
+                        radius={5.0}
+                    />
+                    <LineChart
+                        axis="humi_in"
+                        style={line_styles["humi_out"]}
+                        spacing={5}
+                        columns={["humi_out"]}
                         series={series}
                         radius={5.0}
                     />

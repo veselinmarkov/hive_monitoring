@@ -20,6 +20,7 @@ const axiosInstance = axios.create({
 });
 
 let getSamples = async (hive_id, timerange) => {
+    console.log(hive_id, timerange);
     return await axiosInstance.get('/api/samples/', { params: { sample1: timerange.begin(), 
         sample2: timerange.end(), hive: hive_id}});
 }

@@ -33,7 +33,9 @@ if file_location:
 
 # Attempt to load the Project ID into the environment, safely failing on error.
 try:
-    _, os.environ["GOOGLE_CLOUD_PROJECT"] = google.auth.default()
+    _, proj = google.auth.default()
+    if proj:
+        os.environ["GOOGLE_CLOUD_PROJECT"] = proj
 except google.auth.exceptions.DefaultCredentialsError:
     pass
 
