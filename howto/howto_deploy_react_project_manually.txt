@@ -3,7 +3,7 @@ the Jenkins script cannot build the React part.
 It should be build manually:
 1. In Visual Studio, project HIVE_DJANGO, open terminal
 2. Issue command: npm --prefix react_project run build
-3. delete the static folders in Onion: cd /var/www/hivebox/hive_static/static ; rm -r js media
+3. delete the static folders in Onion: cd /var/www/hivebox/hive_static/static ; sudo rm -r js media
 4. copy the result from VS to Onion: cd react_project/build ; scp -r * root@www.bee-comfort.com:/var/www/hivebox/hive_static/
 5. restart nginx on Onion: systemctl restart nginx
 6. delete cache in your browser
