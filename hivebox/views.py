@@ -32,6 +32,7 @@ from .serializers import MyTokenObtainPairSerializer
 '''
 
 logger = logging.getLogger(__name__)
+logger.setLevel(logging.DEBUG)
 
 #get the thresholds from settings file
 THR_LOW = settings.HIVEBOX.get('AGGREGATE_THRESHOLD_LOW', 100) if settings.HIVEBOX else 100
@@ -42,11 +43,13 @@ AGGR_STR = ["",
     "concat(date_format(sample_time, '%%Y-%%m-%%d %%H:'),lpad(floor(minute(sample_time)/5)*5, 2, '0'))",
     "concat(date_format(sample_time, '%%Y-%%m-%%d %%H:'),lpad(floor(minute(sample_time)/15)*15, 2, '0'))",
     "date_format(sample_time, '%%Y-%%m-%%d %%H:00:00')",
-    "concat(date_format(sample_time, '%%Y-%%m-%%d '),lpad(floor(hour(sample_time)/6)*6, 2, '0'), ':00')",
+    #"concat(date_format(sample_time, '%%Y-%%m-%%d '),lpad(floor(hour(sample_time)/6)*6, 2, '0'), ':00')",
     "date_format(sample_time, '%%Y-%%m-%%d')"
 ]
-AGGR_NAMES = ['20s','1m', '5m', '15m', '1h', '6h', '1d']
-AGGR_PERIOD = [1, 60, 5*60, 15*60, 60*60, 6*60*60, 24*60*60]
+#AGGR_NAMES = ['20s','1m', '5m', '15m', '1h', '6h', '1d']
+AGGR_NAMES = ['20s','1m', '5m', '15m', '1h', '1d']
+#AGGR_PERIOD = [1, 60, 5*60, 15*60, 60*60, 6*60*60, 24*60*60]
+AGGR_PERIOD = [1, 60, 5*60, 15*60, 60*60, 24*60*60]
 SAMPLE_PERIOD_SECONDS = 20
 AGGR_START_STEP = 1
 
@@ -176,6 +179,9 @@ class SamplesRangeView(APIView):
         r["data"]["items"] = samples_seri.data
         r['data']['totalItems'] = len(rows)
         r['data']['aggregation'] = AGGR_NAMES[step]
+        print(r['data']['aggregation'], r['data']['totalItems'])
+        if len(rows) >0:
+            print(r['data']['items'][0])
         return Response(r)
 
 

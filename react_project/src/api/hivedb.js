@@ -11,7 +11,7 @@ import { TimeRange } from "pondjs"; */
 
 const axiosInstance = axios.create({
     // baseURL: 'http://127.0.0.1:8000/api/',
-    timeout: 5000,
+    timeout: 60000,
     headers: {
         'Authorization': sessionStorage.getItem('access_token') ? "JWT " + sessionStorage.getItem('access_token') : "",
         'Content-Type': 'application/json',
@@ -20,9 +20,9 @@ const axiosInstance = axios.create({
 });
 
 let getSamples = async (hive_id, timerange) => {
-    console.log(hive_id, timerange);
-    return await axiosInstance.get('/api/samples/', { params: { sample1: timerange.begin(), 
-        sample2: timerange.end(), hive: hive_id}});
+    console.log(new Date(), hive_id, timerange);
+    return await axiosInstance.get('/api/samples/',  { params: { sample1: timerange.begin(), 
+        sample2: timerange.end(), hive: hive_id}}, {timeout: 2});
 }
 
 let getHives = async () => {
@@ -41,7 +41,8 @@ function register_wrapper(fn) {
                 return await fn(...arguments)
             } catch (error) {
                 // console.log(JSON.stringify(error));
-                if (error.response.status !== 401)
+                // In case of status = 401, hide the error
+                if (! error.response || ! error.response.status || error.response.status !== 401)
                     throw Error(error);
             }
             // try to resfresh the token

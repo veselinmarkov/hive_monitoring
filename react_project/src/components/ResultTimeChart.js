@@ -69,7 +69,7 @@ export function ResultTimeChart({hive_id}) {    // user_id, hive_id,
             setActiveQuery(false);
         }).catch(err => {
             console.log({location: "ResultTimeChart; getSamples return", error: err});
-            setData({"items":[], "aggregation": "1m", "totalItems": 0});
+            //setData({"items":[], "aggregation": "1m", "totalItems": 0});
             setActiveQuery(false);
         })
       }, [hive_id, activeDelay, timerange]);
@@ -82,11 +82,20 @@ export function ResultTimeChart({hive_id}) {    // user_id, hive_id,
 
     //console.log(JSON.stringify(data));
 
+    function show_bad_date(date_str) {
+        try {
+            return new Date(date_str)
+        } catch (error) {
+            console.log('Invalid date:', date_str)
+            throw error
+        }
+    }
     const series = new TimeSeries({
         name: "Bio Unit statistics",
         columns: ["index", "temp_low", "temp_high", "temp_out", "heat_pwr", "temp_hot", "humi_in", "humi_out"],
         points: data.items.map((rec) => [
-            Index.getIndexString(data.aggregation, new Date(rec.sample_time)),
+//            Index.getIndexString(data.aggregation, new Date(rec.sample_time)),
+            Index.getIndexString(data.aggregation, show_bad_date(rec.sample_time)),
             rec.temp_low,
             rec.temp_high,
             rec.temp_out,

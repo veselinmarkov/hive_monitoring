@@ -3,7 +3,13 @@
 curl -d '{"username":"reader","password":"XXXXXXX"}' \
 -H "Content-Type: application/json" -X POST https://bee-comfort.com/api/token/obtain/
 
+curl -d '{"username":"reader","password":"XXXXXXX"}' \
+-H "Content-Type: application/json" -X POST http://localhost:8000/api/token/obtain/
 
 curl -H "Content-Type: application/json" \
--H "Authorization: JWT eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNjY4OTczMDkyLCJpYXQiOjE2Njg5NzI3OTIsImp0aSI6IjI1MzA0NjljN2IyNjQ0OGY4OGE5ZGM5MDEyZjRlYzFiIiwidXNlcl9pZCI6MywidXNlcl9uYW1lIjoicmVhZGVyIn0.dWD4I8zcpYfB7FwrEscSZUxqEVaZzYsdAdLtIv1bI_w" \
+-H "Authorization: JWT eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNjc3OTMwNTk4LCJpYXQiOjE2Nzc5MzAyOTgsImp0aSI6IjI3YjNjMjA1YzQ2YzQ3ZWU4OGM3NThhZTdmNzU3ZGY3IiwidXNlcl9pZCI6MywidXNlcl9uYW1lIjoicmVhZGVyIn0.aRmqTGGE41p5j05Awj57JKAavUGmcg4q0lF3AUnMyMs" \
 'https://bee-comfort.com/api/samples/?hive=7&sample1=2022-10-01T00:05:00Z&sample2=2022-11-20T23:05:00Z' -v -o res.txt
+
+curl -H "Content-Type: application/json" \
+-H "Authorization: JWT eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNjc3OTMyMDg2LCJpYXQiOjE2Nzc5MzE3ODYsImp0aSI6ImY0Mjk0NTI3ZTQ3NjQxYWFiYjI1ZjQ1ZmIwZWY3NDE5IiwidXNlcl9pZCI6MywidXNlcl9uYW1lIjoicmVhZGVyIn0.JywGRSsxbQsB0vp5OcZp-9GoIERHqzvwGgavkKAgyY4" \
+'http://localhost:8000/api/samples/?hive=7&sample1=2022-02-01T00:05:00Z&sample2=2023-03-20T23:05:00Z' -v -o res.txt
