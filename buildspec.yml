@@ -1,0 +1,68 @@
+version: 0.2
+
+env:
+  variables:
+    AWS_DEFAULT_REGION: us-east-1
+    AWS_ACCOUNT_ID: "123456789012"
+    FRONTEND_S3_BUCKET: "your-frontend-bucket"
+    CLOUDFRONT_DISTRIBUTION_ID: "YOUR_DISTRIBUTION_ID"
+    ECR_REPOSITORY: "hive-backend"
+    EB_APPLICATION_NAME: "hive-backend-app"
+    EB_ENVIRONMENT_NAME: "hive-backend-env"
+    EB_BUCKET: "your-eb-source-bucket"
+    DOCKER_IMAGE_NAME: "hive-backend"
+
+phases:
+  install:
+    runtime-versions:
+      python: 3.12
+      nodejs: 14
+    commands:
+      - echo Installing build dependencies
+      - pip install --upgrade pip
+      - pip install awscli
+
+  pre_build:
+    commands:
+      - echo Logging in to Amazon ECR
+      - REPOSITORY_URI=${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/${ECR_REPOSITORY}
+      - IMAGE_TAG=${CODEBUILD_RESOLVED_SOURCE_VERSION:=latest}
+      - aws --version
+      - $(aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin $REPOSITORY_URI)
+
+  build:
+    commands:
+      - echo Building frontend
+      - cd react_project
+      - npm ci
+      - npm run build
+      - cd ..
+      - echo Deploying frontend build to S3
+      - aws s3 sync react_project/build/ s3://$FRONTEND_S3_BUCKET --delete --acl public-read
+      - |
+        if [ -n "$CLOUDFRONT_DISTRIBUTION_ID" ] && [ "$CLOUDFRONT_DISTRIBUTION_ID" != "YOUR_DISTRIBUTION_ID" ]; then
+          aws cloudfront create-invalidation --distribution-id $CLOUDFRONT_DISTRIBUTION_ID --paths "/*"
+        else
+          echo "Skipping CloudFront invalidation because CLOUDFRONT_DISTRIBUTION_ID is not set."
+        fi
+      - echo Building backend Docker image
+      - docker build -t $REPOSITORY_URI:$IMAGE_TAG -f Dockerfile .
+
+  post_build:
+    commands:
+      - echo Pushing Docker image to ECR
+      - docker push $REPOSITORY_URI:$IMAGE_TAG
+      - echo Generating Dockerrun.aws.json for Elastic Beanstalk
+      - printf '{"AWSEBDockerrunVersion":"1","Image":{"Name":"%s","Update":"true"},"Ports":[{"ContainerPort":"8000"}]}' "$REPOSITORY_URI:$IMAGE_TAG" > Dockerrun.aws.json
+      - zip -r deploy.zip Dockerrun.aws.json
+      - echo Uploading EB source bundle to S3
+      - aws s3 cp deploy.zip s3://$EB_BUCKET/deployments/$CODEBUILD_BUILD_NUMBER-deploy.zip
+      - echo Creating Elastic Beanstalk application version
+      - aws elasticbeanstalk create-application-version --application-name $EB_APPLICATION_NAME --version-label $CODEBUILD_BUILD_NUMBER --source-bundle S3Bucket=$EB_BUCKET,S3Key=deployments/$CODEBUILD_BUILD_NUMBER-deploy.zip
+      - echo Updating Elastic Beanstalk environment
+      - aws elasticbeanstalk update-environment --environment-name $EB_ENVIRONMENT_NAME --version-label $CODEBUILD_BUILD_NUMBER
+
+artifacts:
+  files:
+    - buildspec.yml
+    - Dockerrun.aws.json

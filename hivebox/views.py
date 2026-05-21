@@ -9,7 +9,6 @@ import logging
 
 from rest_framework.views import APIView
 
-from web_project import settings
 from .models import SamplesH, Samples, SamplesRange, Hives
 from .serializers import SamplesH_seri, Samples_seri, UserSerializer, HivesSerializer
 from rest_framework.parsers import JSONParser

@@ -79,6 +79,7 @@ class SamplesTest(APITestCase):
             "pid_deviation":0.00, "pid_integral":0.00, "pid_derivative":0.00, "pid_output":0.00, 
             "humidity_hive_air":0.00, "t_hive_ceiling":33.38, "heater_breakers":10}
         response = client.post(reverse('sample'), bad_data, HTTP_AUTHORIZATION=header, format='json')
+        # response = client.post(reverse('sample'), bad_data, format='json')
         #self.assertEqual(response.data, serializer.data)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         
