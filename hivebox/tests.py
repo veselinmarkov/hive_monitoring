@@ -18,6 +18,16 @@ class SamplesTest(APITestCase):
     def setUp(self):
         pass
 
+    @classmethod
+    def tearDownClass(cls):
+        super().tearDownClass()
+        db_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'db.sqlite3'))
+        if os.path.exists(db_path):
+            try:
+                os.remove(db_path)
+            except OSError:
+                pass
+
     #More tests need
     def test_01_user_authentication(self):
         ''' Test JWT authorization, interfaces /user/create/; /token/obtain/; /token/refresh/'''
@@ -241,9 +251,9 @@ class SamplesTest(APITestCase):
         key_rsa = PrivateKey.load_pem_from_file(priv_path)
         header = Token(user.username).create_auth_header(key_rsa)
         # wite the token to a file for inspection
-        token_path = os.path.join(base, "test_fixtures/dummy_token.txt")
-        with open(token_path, 'w') as f1:
-            f1.write(header)
+        # token_path = os.path.join(base, "test_fixtures/dummy_token.txt")
+        # with open(token_path, 'w') as f1:
+        #     f1.write(header)
 
         print('POST a valid record')
         good_data = {"hive":1, "time_stamp":"2020-06-30T20:05:00Z", "t_heated_air":32.69, "t_hive_air":0.00, 
