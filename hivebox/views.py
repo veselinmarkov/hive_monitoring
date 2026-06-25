@@ -178,8 +178,8 @@ class SamplesRangeView(APIView):
                     round(avg(temp_target),3) as temp_target,
                     round(avg(humi_in),2) as humi_in,
                     round(avg(humi_out),2) as humi_out,
-                    cast(avg(heat_pwr) as integer) as heat_pwr,
-                    cast(avg(fan) as integer) as fan,
+                    round(avg(heat_pwr),0) as heat_pwr,
+                    round(avg(fan),0) as fan,
                     max(mode) as mode,
                     max(heater_breakers) as heater_breakers FROM samples WHERE 
                     sample_time >= %s and sample_time < %s and hive = %s 

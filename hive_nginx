@@ -3,11 +3,10 @@ upstream app_server {
     # fail_timeout=0 means we always retry an upstream even if it failed
     # to return a good HTTP response
 
-    # for UNIX domain socket setups
-    server unix:/tmp/gunicorn.sock fail_timeout=0;
-
-    # for a TCP configuration
-    # server 192.168.0.7:8000 fail_timeout=0;
+                # TCP configuration: Gunicorn will bind to 127.0.0.1:8000 inside the container
+                server $GUNICORN_HOST fail_timeout=0;
+                # If you prefer a UNIX socket, change the startup script and uncomment below:
+                # server unix:/tmp/gunicorn.sock fail_timeout=0;
   }
 
 server {

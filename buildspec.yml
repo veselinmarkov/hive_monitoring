@@ -16,7 +16,7 @@ phases:
   install:
     runtime-versions:
       python: 3.12
-      nodejs: 14
+      nodejs: 18
     commands:
       - echo Installing build dependencies
       - pip install --upgrade pip
@@ -29,12 +29,18 @@ phases:
       - IMAGE_TAG=${CODEBUILD_RESOLVED_SOURCE_VERSION:=latest}
       - aws --version
       - $(aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin $REPOSITORY_URI)
+      - echo Reading database connection info from Parameter Store
+      - DB_HOST=$(aws ssm get-parameter --name /hive/db/host --query 'Parameter.Value' --output text)
+      - DB_NAME_VALUE=$(aws ssm get-parameter --name /hive/db/name --query 'Parameter.Value' --output text)
+      - DB_USERNAME_VALUE=$(aws ssm get-parameter --name /hive/db/username --query 'Parameter.Value' --output text)
+      - DB_PASSWORD_VALUE=$(aws ssm get-parameter --name /hive/db/password --with-decryption --query 'Parameter.Value' --output text)
+      - DATABASE_URL="mysql://${DB_USERNAME_VALUE}:${DB_PASSWORD_VALUE}@${DB_HOST}:3306/${DB_NAME_VALUE}"
 
   build:
     commands:
       - echo Building frontend
       - cd react_project
-      - npm ci
+      - npm ci --legacy-peer-deps
       - npm run build
       - cd ..
       - echo Deploying frontend build to S3
@@ -60,7 +66,7 @@ phases:
       - echo Creating Elastic Beanstalk application version
       - aws elasticbeanstalk create-application-version --application-name $EB_APPLICATION_NAME --version-label $CODEBUILD_BUILD_NUMBER --source-bundle S3Bucket=$EB_BUCKET,S3Key=deployments/$CODEBUILD_BUILD_NUMBER-deploy.zip
       - echo Updating Elastic Beanstalk environment
-      - aws elasticbeanstalk update-environment --environment-name $EB_ENVIRONMENT_NAME --version-label $CODEBUILD_BUILD_NUMBER
+      - aws elasticbeanstalk update-environment --environment-name $EB_ENVIRONMENT_NAME --version-label $CODEBUILD_BUILD_NUMBER --option-settings Namespace=aws:elasticbeanstalk:application:environment,OptionName=DATABASE_URL,Value="$DATABASE_URL"
 
 artifacts:
   files:

@@ -1,0 +1,74 @@
+version: '3.8'
+
+services:
+  # MySQL Database Service
+  db:
+    image: mysql:8.0
+    container_name: hivebox_mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: hive
+      MYSQL_USER: hivebox_user
+      MYSQL_PASSWORD: hivebox_password
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./sql_init:/docker-entrypoint-initdb.d  # For initial SQL scripts if needed
+    networks:
+      - hivebox_network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      timeout: 20s
+      retries: 10
+      interval: 10s
+
+  # Django Application Service (includes built React frontend)
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: hivebox_app
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      # Database Configuration
+      DATABASE_URL: mysql://hivebox_user:hivebox_password@db:3306/hive
+      # Nginx listen port inside the container (nginx config uses $PORT)
+      # Change to 8080 to temporarily serve on 8080 instead of 80
+      PORT: "80"
+      GUNICORN_HOST: "127.0.0.1:8000"
+      
+      # Django Configuration
+      SECRET_KEY: your-secret-key-change-this-in-production
+      DEVELOP: "False"
+      DEBUG: "False"
+      
+      # Other environment variables as needed
+      PYTHONUNBUFFERED: 1
+    ports:
+      - "8000:8000"
+      - "8080:80"
+    volumes:
+      - ./hivebox:/app/hivebox
+      - ./web_project:/app/web_project
+      - ./manage.py:/app/manage.py
+      - ./uwsgi.ini:/app/uwsgi.ini
+      - ./run_nginx_and_gunicorn.sh:/app/run_nginx_and_gunicorn.sh
+      # Mount local .env into the container so Django can load secrets
+      - ./.env:/app/.env:ro
+      - static_volume:/app/static
+    networks:
+      - hivebox_network
+    command: ./run_nginx_and_gunicorn.sh
+
+volumes:
+  mysql_data:
+    driver: local
+  static_volume:
+    driver: local
+
+networks:
+  hivebox_network:
+    driver: bridge

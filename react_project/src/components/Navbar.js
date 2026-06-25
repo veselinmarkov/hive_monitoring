@@ -20,6 +20,14 @@ export default function Navbar({user, handleUserChange}) { //{... , user_id, use
     // const [user, setUser] = React.useState(null); 
 
     useEffect( () => {
+        const handleApiError = (event) => {
+            setSnakMessage('Backend error (code ' + event.detail.status + '). See browser console for details.');
+        };
+        window.addEventListener('api-error', handleApiError);
+        return () => window.removeEventListener('api-error', handleApiError);
+    }, []);
+
+    useEffect( () => {
         if (! user) {
             if (! sessionStorage.getItem('refresh_token'))
                 return;
