@@ -65,8 +65,14 @@ EB_BUCKET:          "hive-eb-deployments"
 3. Platform: **Docker** → Platform branch: **Docker running on 64bit Amazon Linux 2023**
 4. Click **Create environment** → Web server environment
 5. Environment name: `hive-backend-env`
-6. For initial deployment, choose "Sample application" — CodePipeline will deploy the real image
+6. For initial deployment, choose "Sample application" — CodeBuild will deploy the real image
 7. Under **Configure more options → Network**: place it in the same VPC where the MySQL EC2 host (see [INFRA_SETUP.md](INFRA_SETUP.md)) will run
+8. Attach `AmazonEC2ContainerRegistryReadOnly` to the `aws-elasticbeanstalk-ec2-role` IAM role so the EB instances can pull the Docker image from ECR:
+   ```bash
+   aws iam attach-role-policy \
+     --role-name aws-elasticbeanstalk-ec2-role \
+     --policy-arn arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly
+   ```
 
 Update `buildspec.yml`:
 ```
