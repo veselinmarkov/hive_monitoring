@@ -95,6 +95,7 @@ CodeBuild needs permissions to push to ECR, write to S3, deploy to EB, and read 
 2. Trusted entity: **AWS service → CodeBuild**
 3. Attach these managed policies:
    - `AmazonEC2ContainerRegistryPowerUser`
+   - `AmazonElasticContainerRegistryPublicReadOnly`
    - `AmazonS3FullAccess`
    - `AdministratorAccess-AWSElasticBeanstalk`
 4. Add an inline policy granting read access to the database parameters
