@@ -219,3 +219,5 @@ On each pipeline run:
 
 **EB deployment stuck on "Updating"**
 → Check the EB environment events tab and the container logs for startup errors (missing env vars, DB connection failure — confirm the EC2 MySQL host's security group allows inbound 3306 from the EB environment's security group).
+
+Added to trigger a build
