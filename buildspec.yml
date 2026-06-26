@@ -43,7 +43,7 @@ phases:
       - npm run build
       - cd ..
       - echo Deploying frontend build to S3
-      - aws s3 sync react_project/build/ s3://$FRONTEND_S3_BUCKET --delete --acl public-read
+      - aws s3 sync react_project/build/ s3://$FRONTEND_S3_BUCKET --delete
       - |
         if [ -n "$CLOUDFRONT_DISTRIBUTION_ID" ] && [ "$CLOUDFRONT_DISTRIBUTION_ID" != "YOUR_DISTRIBUTION_ID" ]; then
           aws cloudfront create-invalidation --distribution-id $CLOUDFRONT_DISTRIBUTION_ID --paths "/*"
