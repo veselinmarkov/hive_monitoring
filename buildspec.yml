@@ -20,7 +20,6 @@ phases:
     commands:
       - echo Installing build dependencies
       - pip install --upgrade pip
-      - pip install awscli
 
   pre_build:
     commands:
@@ -28,7 +27,7 @@ phases:
       - REPOSITORY_URI=${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/${ECR_REPOSITORY}
       - IMAGE_TAG=${CODEBUILD_RESOLVED_SOURCE_VERSION:=latest}
       - aws --version
-      - $(aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin $REPOSITORY_URI)
+      - aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin $REPOSITORY_URI
       - echo Reading database connection info from Parameter Store
       - DB_HOST=$(aws ssm get-parameter --name /hive/db/host --query 'Parameter.Value' --output text)
       - DB_NAME_VALUE=$(aws ssm get-parameter --name /hive/db/name --query 'Parameter.Value' --output text)
