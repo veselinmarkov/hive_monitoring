@@ -94,10 +94,9 @@ CodeBuild needs permissions to push to ECR, write to S3, deploy to EB, and read 
 1. Go to **IAM → Roles → Create role**
 2. Trusted entity: **AWS service → CodeBuild**
 3. Attach these managed policies:
-   - `AWSCodeBuildAdminAccess`
    - `AmazonEC2ContainerRegistryPowerUser`
    - `AmazonS3FullAccess`
-   - `AWSElasticBeanstalkFullAccess`
+   - `AdministratorAccess-AWSElasticBeanstalk`
 4. Add an inline policy granting read access to the database parameters
    written by the infra pipeline (see [INFRA_SETUP.md](INFRA_SETUP.md) Step 4):
    ```json
@@ -106,7 +105,7 @@ CodeBuild needs permissions to push to ECR, write to S3, deploy to EB, and read 
      "Statement": [{
        "Effect": "Allow",
        "Action": ["ssm:GetParameter"],
-       "Resource": "arn:aws:ssm:us-east-1:*:parameter/hive/db/*"
+       "Resource": "arn:aws:ssm:eu-central-1:*:parameter/hive/db/*"
      }]
    }
    ```

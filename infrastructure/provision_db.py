@@ -7,15 +7,17 @@ the app build/deploy pipeline. Idempotent: if the named instance already
 exists, no infrastructure is created or modified.
 
 Configuration is read from environment variables (set in infra-buildspec.yml):
-  AWS_DEFAULT_REGION    - region to provision in (default: us-east-1)
-  VPC_SUBNET_ID         - subnet the instance launches into (required)
-  APP_SECURITY_GROUP_ID - security group of the app servers that need DB access (required)
+  AWS_DEFAULT_REGION    - region to provision in (default: eu-central-1)
   EB_BUCKET             - existing S3 bucket used to stage the sql_init dumps (required)
   DB_INSTANCE_NAME      - EC2 Name tag (default: hive-mysql-host)
   DB_INSTANCE_TYPE      - EC2 instance type (default: t3.small)
   DB_VOLUME_SIZE_GB     - size of the attached data volume (default: 20)
   DB_NAME               - MySQL database name (default: hive)
   DB_USERNAME           - MySQL application user (default: hiveadmin)
+
+The following are read from SSM Parameter Store at runtime:
+  /hive/infra/subnet-id              - subnet the instance launches into
+  /hive/infra/app-security-group-id  - security group of the app servers that need DB access
 
 On success, writes connection details to SSM Parameter Store under /hive/db/*,
 which the app pipeline (buildspec.yml) reads to set the EB DATABASE_URL.
@@ -28,9 +30,7 @@ import time
 import boto3
 from botocore.exceptions import ClientError
 
-REGION = os.environ.get("AWS_DEFAULT_REGION", "us-east-1")
-SUBNET_ID = os.environ["VPC_SUBNET_ID"]
-APP_SECURITY_GROUP_ID = os.environ["APP_SECURITY_GROUP_ID"]
+REGION = os.environ.get("AWS_DEFAULT_REGION", "eu-central-1")
 EB_BUCKET = os.environ["EB_BUCKET"]
 
 INSTANCE_NAME = os.environ.get("DB_INSTANCE_NAME", "hive-mysql-host")
@@ -46,6 +46,9 @@ DATA_DEVICE = "/dev/sdf"
 SQL_INIT_S3_PREFIX = "db-init/"
 UBUNTU_AMI_PARAM = "/aws/service/canonical/ubuntu/server/22.04/stable/current/amd64/hvm/ebs-gp2/ami-id"
 
+SUBNET_ID_PARAM = "/hive/infra/subnet-id"
+APP_SG_PARAM = "/hive/infra/app-security-group-id"
+
 HOST_PARAM = "/hive/db/host"
 PASSWORD_PARAM = "/hive/db/password"
 NAME_PARAM = "/hive/db/name"
@@ -55,6 +58,20 @@ ec2 = boto3.client("ec2", region_name=REGION)
 ssm = boto3.client("ssm", region_name=REGION)
 iam = boto3.client("iam", region_name=REGION)
 s3 = boto3.client("s3", region_name=REGION)
+
+def _require_ssm_param(name):
+    try:
+        return ssm.get_parameter(Name=name)["Parameter"]["Value"]
+    except ClientError as e:
+        if e.response["Error"]["Code"] == "ParameterNotFound":
+            raise SystemExit(
+                f"ERROR: Required SSM parameter '{name}' not found. "
+                f"Create it with: aws ssm put-parameter --name {name} --value <value> --type String --region {REGION}"
+            )
+        raise
+
+SUBNET_ID = _require_ssm_param(SUBNET_ID_PARAM)
+APP_SECURITY_GROUP_ID = _require_ssm_param(APP_SG_PARAM)
 
 
 def find_existing_instance():

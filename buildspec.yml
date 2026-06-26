@@ -2,14 +2,14 @@ version: 0.2
 
 env:
   variables:
-    AWS_DEFAULT_REGION: us-east-1
-    AWS_ACCOUNT_ID: "123456789012"
-    FRONTEND_S3_BUCKET: "your-frontend-bucket"
+    AWS_DEFAULT_REGION: eu-central-1
+    AWS_ACCOUNT_ID: "412265554969"
+    FRONTEND_S3_BUCKET: "hive-frontend-412265554969-eu-central-1-an"
     CLOUDFRONT_DISTRIBUTION_ID: "YOUR_DISTRIBUTION_ID"
     ECR_REPOSITORY: "hive-backend"
     EB_APPLICATION_NAME: "hive-backend-app"
     EB_ENVIRONMENT_NAME: "hive-backend-env"
-    EB_BUCKET: "your-eb-source-bucket"
+    EB_BUCKET: "hive-eb-deployments-412265554969-eu-central-1-an"
     DOCKER_IMAGE_NAME: "hive-backend"
 
 phases:
