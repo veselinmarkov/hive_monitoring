@@ -1,7 +1,7 @@
 # ============================================================================
 # Stage 1: Build React Frontend
 # ============================================================================
-FROM node:18-alpine AS react_builder
+FROM public.ecr.aws/docker/library/node:18-alpine AS react_builder
 
 WORKDIR /app
 
@@ -24,7 +24,7 @@ RUN npm run build
 # ============================================================================
 # Stage 2: Build Python/Django Backend
 # ============================================================================
-FROM python:3.12-slim
+FROM public.ecr.aws/docker/library/python:3.12-slim
 
 RUN apt-get update && \
     apt-get --yes install gcc pkg-config python3-dev libmariadb-dev nginx gettext-base && \
