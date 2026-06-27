@@ -40,7 +40,7 @@ phases:
     commands:
       - echo Building frontend
       - cd react_project
-      - npm ci --legacy-peer-deps
+      - npm ci --legacy-peer-deps --cache /tmp/npm-cache
       - npm run build
       - cd ..
       - echo Deploying frontend build to S3

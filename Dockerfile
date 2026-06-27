@@ -9,7 +9,7 @@ WORKDIR /app
 COPY react_project/package*.json ./
 
 # Install dependencies and bypass legacy peer dependency conflicts
-RUN npm ci --only=production --legacy-peer-deps
+RUN npm ci --only=production --legacy-peer-deps --cache /tmp/npm-cache
 
 # Copy React source code
 COPY react_project/public ./public
