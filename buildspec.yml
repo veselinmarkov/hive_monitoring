@@ -19,7 +19,7 @@ phases:
       nodejs: 18
     commands:
       - echo Installing build dependencies
-      - pip install --upgrade pip
+      - pip install --upgrade pip boto3
 
   pre_build:
     commands:
@@ -71,6 +71,8 @@ phases:
         aws elasticbeanstalk update-environment --environment-name $EB_ENVIRONMENT_NAME --version-label $CODEBUILD_BUILD_NUMBER --option-settings \
           Namespace=aws:elasticbeanstalk:application:environment,OptionName=DATABASE_URL,Value="$DATABASE_URL" \
           Namespace=aws:elasticbeanstalk:application:environment,OptionName=SECRET_KEY,Value="$SECRET_KEY"
+      - echo Ensuring CloudFront distribution exists in front of EB
+      - python3 infrastructure/ensure_cf_distribution.py
 
 artifacts:
   files:
