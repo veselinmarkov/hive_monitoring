@@ -4,7 +4,7 @@ upstream app_server {
     # to return a good HTTP response
 
                 # TCP configuration: Gunicorn will bind to 127.0.0.1:8000 inside the container
-                server $GUNICORN_HOST fail_timeout=0;
+                server 127.0.0.1:8000 fail_timeout=0;
                 # If you prefer a UNIX socket, change the startup script and uncomment below:
                 # server unix:/tmp/gunicorn.sock fail_timeout=0;
   }
