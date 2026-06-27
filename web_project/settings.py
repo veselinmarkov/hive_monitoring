@@ -2,6 +2,7 @@
 Django settings for web_project project.
 
 ENV_FILE_LOCATION - define the location of the .env configuration file
+DATABASE_URL + SECRET_KEY - passed directly as environment variables (e.g. Elastic Beanstalk)
 AWS_SECRETS_NAME - name of the secret in AWS Secrets Manager (default: 'django_settings')
 RUN_TEST - Setup a SQLite db for testing
 DEVELOP - True/False set the DEBUG flag in the Django project (must be False for production)
@@ -44,6 +45,9 @@ elif os.environ.get("RUN_TEST", None):
         f"DATABASE_URL=sqlite://{os.path.join(BASE_DIR, 'db.sqlite3')}"
     )
     env.read_env(io.StringIO(placeholder))
+elif os.environ.get("DATABASE_URL") and os.environ.get("SECRET_KEY"):
+    # DATABASE_URL and SECRET_KEY injected directly as environment variables (e.g. Elastic Beanstalk)
+    env.read_env(io.StringIO(""))
 elif os.environ.get("AWS_SECRETS_NAME", None):
     # Pull secrets from AWS Secrets Manager
     secrets_name = os.environ.get("AWS_SECRETS_NAME", "django_settings")
@@ -57,7 +61,7 @@ elif os.environ.get("AWS_SECRETS_NAME", None):
     except Exception as e:
         raise Exception(f"Error retrieving secret from AWS Secrets Manager: {e}")
 else:
-    raise Exception("No local .env or AWS_SECRETS_NAME detected. No secrets found.")
+    raise Exception("No local .env, DATABASE_URL, or AWS_SECRETS_NAME detected. No secrets found.")
 
 
 # SECRET_KEY = 'django-insecure-rna9496%jo3u**+fetl60$4qyq9mx9xtcli+r$i0&5hb+s15^)'

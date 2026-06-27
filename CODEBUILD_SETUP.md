@@ -112,7 +112,10 @@ CodeBuild needs permissions to push to ECR, write to S3, deploy to EB, and read 
      "Statement": [{
        "Effect": "Allow",
        "Action": ["ssm:GetParameter"],
-       "Resource": "arn:aws:ssm:eu-central-1:*:parameter/hive/db/*"
+       "Resource": [
+         "arn:aws:ssm:eu-central-1:*:parameter/hive/db/*",
+         "arn:aws:ssm:eu-central-1:*:parameter/hive/django/*"
+       ]
      }]
    }
    ```

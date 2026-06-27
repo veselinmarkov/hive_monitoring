@@ -35,6 +35,7 @@ phases:
       - export DB_USERNAME_VALUE=$(aws ssm get-parameter --name /hive/db/username --query 'Parameter.Value' --output text)
       - export DB_PASSWORD_VALUE=$(aws ssm get-parameter --name /hive/db/password --with-decryption --query 'Parameter.Value' --output text)
       - export DATABASE_URL="mysql://${DB_USERNAME_VALUE}:${DB_PASSWORD_VALUE}@${DB_HOST}:3306/${DB_NAME_VALUE}"
+      - export SECRET_KEY=$(aws ssm get-parameter --name /hive/django/secret_key --with-decryption --query 'Parameter.Value' --output text)
 
   build:
     commands:
@@ -66,7 +67,10 @@ phases:
       - echo Creating Elastic Beanstalk application version
       - aws elasticbeanstalk create-application-version --application-name $EB_APPLICATION_NAME --version-label $CODEBUILD_BUILD_NUMBER --source-bundle S3Bucket=$EB_BUCKET,S3Key=deployments/$CODEBUILD_BUILD_NUMBER-deploy.zip
       - echo Updating Elastic Beanstalk environment
-      - aws elasticbeanstalk update-environment --environment-name $EB_ENVIRONMENT_NAME --version-label $CODEBUILD_BUILD_NUMBER --option-settings Namespace=aws:elasticbeanstalk:application:environment,OptionName=DATABASE_URL,Value="$DATABASE_URL"
+      - |
+        aws elasticbeanstalk update-environment --environment-name $EB_ENVIRONMENT_NAME --version-label $CODEBUILD_BUILD_NUMBER --option-settings \
+          Namespace=aws:elasticbeanstalk:application:environment,OptionName=DATABASE_URL,Value="$DATABASE_URL" \
+          Namespace=aws:elasticbeanstalk:application:environment,OptionName=SECRET_KEY,Value="$SECRET_KEY"
 
 artifacts:
   files:
