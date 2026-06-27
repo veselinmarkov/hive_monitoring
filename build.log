@@ -1,839 +1,0 @@
-[4m>>>> Executing external compose provider "/usr/local/bin/docker-compose". Please see podman-compose(1) for how to disable this message. <<<<
-
-[0m--progress is a global compose flag, better use `docker compose --progress xx build ...
-time="2026-06-12T23:38:12+02:00" level=warning msg="/Users/veselinmarkov/Documents/prog/hive_monitoring/docker-compose.yml: the attribute `version` is obsolete, it will be ignored, please remove it to avoid potential confusion"
- Image hive_monitoring-app Building 
- Image hive_monitoring-app Building 
-Sending build context to Docker daemon  524.4kBSending build context to Docker daemon  2.632MBSending build context to Docker daemon  3.681MBSending build context to Docker daemon  4.205MBSending build context to Docker daemon  4.729MBSending build context to Docker daemon  5.254MBSending build context to Docker daemon  5.778MBSending build context to Docker daemon  6.303MBSending build context to Docker daemon  6.827MBSending build context to Docker daemon  7.351MBSending build context to Docker daemon    8.4MBSending build context to Docker daemon  9.449MBSending build context to Docker daemon   10.5MBSending build context to Docker daemon  11.55MBSending build context to Docker daemon   12.6MBSending build context to Docker daemon  13.12MBSending build context to Docker daemon  13.64MBSending build context to Docker daemon  14.17MBSending build context to Docker daemon  14.69MBSending build context to Docker daemon  15.22MBSending build context to Docker daemon  16.27MBSending build context to Docker daemon  16.79MBSending build context to Docker daemon  17.31MBSending build context to Docker daemon  17.84MBSending build context to Docker daemon  18.36MBSending build context to Docker daemon  18.89MBSending build context to Docker daemon  19.41MBSending build context to Docker daemon  19.94MBSending build context to Docker daemon  20.99MBSending build context to Docker daemon  22.03MBSending build context to Docker daemon  23.08MBSending build context to Docker daemon  24.13MBSending build context to Docker daemon  24.66MBSending build context to Docker daemon  25.18MBSending build context to Docker daemon  25.71MBSending build context to Docker daemon  26.23MBSending build context to Docker daemon  26.75MBSending build context to Docker daemon   27.8MBSending build context to Docker daemon  28.33MBSending build context to Docker daemon  28.85MBSending build context to Docker daemon  29.38MBSending build context to Docker daemon   29.9MBSending build context to Docker daemon  30.42MBSending build context to Docker daemon  30.95MBSending build context to Docker daemon     32MBSending build context to Docker daemon  32.52MBSending build context to Docker daemon  33.05MBSending build context to Docker daemon  33.57MBSending build context to Docker daemon   34.1MBSending build context to Docker daemon  34.62MBSending build context to Docker daemon  35.14MBSending build context to Docker daemon  35.67MBSending build context to Docker daemon  36.19MBSending build context to Docker daemon  36.72MBSending build context to Docker daemon  37.24MBSending build context to Docker daemon  38.29MBSending build context to Docker daemon  39.34MBSending build context to Docker daemon  40.39MBSending build context to Docker daemon  40.91MBSending build context to Docker daemon  41.44MBSending build context to Docker daemon  41.96MBSending build context to Docker daemon  42.49MBSending build context to Docker daemon  43.01MBSending build context to Docker daemon  43.54MBSending build context to Docker daemon  44.06MBSending build context to Docker daemon  45.11MBSending build context to Docker daemon  45.63MBSending build context to Docker daemon  47.21MBSending build context to Docker daemon  48.26MBSending build context to Docker daemon  48.79MBSending build context to Docker daemon  49.84MBSending build context to Docker daemon  50.88MBSending build context to Docker daemon  51.93MBSending build context to Docker daemon  52.98MBSending build context to Docker daemon  54.03MBSending build context to Docker daemon  55.08MBSending build context to Docker daemon   55.6MBSending build context to Docker daemon  57.18MBSending build context to Docker daemon  58.23MBSending build context to Docker daemon   59.8MBSending build context to Docker daemon  60.85MBSending build context to Docker daemon   61.9MBSending build context to Docker daemon  62.95MBSending build context to Docker daemon     64MBSending build context to Docker daemon  65.04MBSending build context to Docker daemon  66.62MBSending build context to Docker daemon  67.67MBSending build context to Docker daemon  68.71MBSending build context to Docker daemon  69.24MBSending build context to Docker daemon  70.29MBSending build context to Docker daemon  71.34MBSending build context to Docker daemon  72.39MBSending build context to Docker daemon  74.48MBSending build context to Docker daemon  75.01MBSending build context to Docker daemon  76.06MBSending build context to Docker daemon  76.58MBSending build context to Docker daemon  77.63MBSending build context to Docker daemon  78.15MBSending build context to Docker daemon   79.2MBSending build context to Docker daemon  79.73MBSending build context to Docker daemon  80.25MBSending build context to Docker daemon  80.78MBSending build context to Docker daemon  81.82MBSending build context to Docker daemon  82.35MBSending build context to Docker daemon  82.87MBSending build context to Docker daemon   83.4MBSending build context to Docker daemon  87.61MBSending build context to Docker daemon  92.87MBSending build context to Docker daemon  94.49MB
-[1/2] STEP 1/8: FROM node:18-alpine AS react_builder
-[1/2] STEP 2/8: WORKDIR /app
---> 525b2b2b7678
-[1/2] STEP 3/8: COPY react_project/package*.json ./
---> 918ebe8fcad0
-[1/2] STEP 4/8: RUN npm ci --only=production --legacy-peer-deps
-npm warn config only Use `--omit=dev` to omit dev dependencies from the install.
-npm warn deprecated urix@0.1.0: Please see https://github.com/lydell/urix#deprecated
-npm warn deprecated tar@6.2.1: Old versions of tar are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me
-npm warn deprecated svgo@1.3.2: This SVGO version is no longer supported. Upgrade to v2.x.x.
-npm warn deprecated sane@4.1.0: some dependency vulnerabilities fixed, support for node < 10 dropped, and newer ECMAScript syntax/features added
-npm warn deprecated rollup-plugin-babel@4.4.0: This package has been deprecated and is no longer maintained. Please use @rollup/plugin-babel.
-npm warn deprecated resolve-url@0.2.1: https://github.com/lydell/resolve-url#deprecated
-npm warn deprecated querystring@0.2.1: The querystring API is considered Legacy. new code should use the URLSearchParams API instead.
-npm warn deprecated lodash.template@4.18.1: This package is deprecated. Use https://socket.dev/npm/package/eta instead.
-npm warn deprecated flatten@1.0.3: flatten is deprecated in favor of utility frameworks such as lodash.
-npm warn deprecated babel-eslint@10.1.0: babel-eslint is now @babel/eslint-parser. This package will no longer receive updates.
-npm warn deprecated @hapi/topo@3.1.6: This version has been deprecated and is no longer supported or maintained
-npm warn deprecated @hapi/address@2.1.4: Moved to 'npm install @sideway/address'
-npm warn deprecated @hapi/joi@15.1.1: Switch to 'npm install joi'
-npm warn deprecated @hapi/bourne@1.3.2: This version has been deprecated and is no longer supported or maintained
-npm warn deprecated @hapi/hoek@8.5.1: This version has been deprecated and is no longer supported or maintained
-npm warn deprecated @babel/plugin-proposal-private-methods@7.18.6: This proposal has been merged to the ECMAScript standard and thus this plugin is no longer maintained. Please use @babel/plugin-transform-private-methods instead.
-npm warn deprecated @babel/plugin-proposal-private-property-in-object@7.21.11: This proposal has been merged to the ECMAScript standard and thus this plugin is no longer maintained. Please use @babel/plugin-transform-private-property-in-object instead.
-npm warn deprecated @babel/plugin-proposal-class-properties@7.18.6: This proposal has been merged to the ECMAScript standard and thus this plugin is no longer maintained. Please use @babel/plugin-transform-class-properties instead.
-npm warn deprecated @babel/plugin-proposal-nullish-coalescing-operator@7.18.6: This proposal has been merged to the ECMAScript standard and thus this plugin is no longer maintained. Please use @babel/plugin-transform-nullish-coalescing-operator instead.
-npm warn deprecated @babel/plugin-proposal-numeric-separator@7.18.6: This proposal has been merged to the ECMAScript standard and thus this plugin is no longer maintained. Please use @babel/plugin-transform-numeric-separator instead.
-npm warn deprecated @babel/plugin-proposal-optional-chaining@7.21.0: This proposal has been merged to the ECMAScript standard and thus this plugin is no longer maintained. Please use @babel/plugin-transform-optional-chaining instead.
-npm warn deprecated uuid@3.4.0: Please upgrade  to version 7 or higher.  Older versions may use Math.random() in certain circumstances, which is known to be problematic.  See https://v8.dev/blog/math-random for details.
-npm warn deprecated chokidar@2.1.8: Chokidar 2 will break on node v14+. Upgrade to chokidar 3 with 15x less dependencies.
-npm warn deprecated chokidar@2.1.8: Chokidar 2 will break on node v14+. Upgrade to chokidar 3 with 15x less dependencies.
-npm warn deprecated querystring@0.2.0: The querystring API is considered Legacy. new code should use the URLSearchParams API instead.
-npm warn deprecated core-js@2.6.12: core-js@<3.3 is no longer maintained and not recommended for usage due to the number of issues. Because of the V8 engine whims, feature detection in old core-js versions could cause a slowdown up to 100x even if nothing is polyfilled. Please, upgrade your dependencies to the actual version of core-js.
-npm warn deprecated core-js@2.6.12: core-js@<3.23.3 is no longer maintained and not recommended for usage due to the number of issues. Because of the V8 engine whims, feature detection in old core-js versions could cause a slowdown up to 100x even if nothing is polyfilled. Some versions have web compatibility issues. Please, upgrade your dependencies to the actual version of core-js.
-
-added 1883 packages, and audited 1884 packages in 17s
-
-170 packages are looking for funding
-  run `npm fund` for details
-
-158 vulnerabilities (8 low, 102 moderate, 41 high, 7 critical)
-
-To address issues that do not require attention, run:
-  npm audit fix
-
-To address all issues possible (including breaking changes), run:
-  npm audit fix --force
-
-Some issues need review, and may require choosing
-a different dependency.
-
-Run `npm audit` for details.
-npm notice
-npm notice New major version of npm available! 10.8.2 -> 11.17.0
-npm notice Changelog: https://github.com/npm/cli/releases/tag/v11.17.0
-npm notice To update run: npm install -g npm@11.17.0
-npm notice
---> de420bae6fd6
-[1/2] STEP 5/8: COPY react_project/public ./public
---> a211b03a57f4
-[1/2] STEP 6/8: COPY react_project/src ./src
---> 255c08934c0a
-[1/2] STEP 7/8: ENV NODE_OPTIONS=--openssl-legacy-provider
---> 09aeca28e901
-[1/2] STEP 8/8: RUN npm run build
-
-> hivebox@0.1.0 build
-> NODE_OPTIONS=--openssl-legacy-provider react-scripts build
-
-Creating an optimized production build...
-Compiled with warnings.
-
-src/components/Who.js
-  Line 2:38:  'Divider' is defined but never used  no-unused-vars
-
-Search for the keywords to learn more about each warning.
-To ignore, add // eslint-disable-next-line to the line before.
-
-File sizes after gzip:
-
-  242.51 KB  build/static/js/2.adbbb446.chunk.js
-  6.63 KB    build/static/js/main.cdb13bc0.chunk.js
-  1.61 KB    build/static/js/3.1c0b2c79.chunk.js
-  1.17 KB    build/static/js/runtime-main.a60e475f.js
-
-The project was built assuming it is hosted at /.
-You can control this with the homepage field in your package.json.
-
-The build folder is ready to be deployed.
-You may serve it with a static server:
-
-  npm install -g serve
-  serve -s build
-
-Find out more about deployment here:
-
-  https://cra.link/deployment
-
---> 0db2ae2712ee
-[2/2] STEP 1/21: FROM python:3.12-slim
-[2/2] STEP 2/21: RUN apt-get update &&     apt-get --yes install gcc pkg-config python3-dev libmariadb-dev nginx gettext-base &&     apt-get clean && rm -rf /var/lib/apt/lists/*
-Hit:1 http://deb.debian.org/debian trixie InRelease
-Get:2 http://deb.debian.org/debian trixie-updates InRelease [47.3 kB]
-Get:3 http://deb.debian.org/debian-security trixie-security InRelease [43.4 kB]
-Get:4 http://deb.debian.org/debian trixie/main arm64 Packages [9608 kB]
-Get:5 http://deb.debian.org/debian trixie-updates/main arm64 Packages [5404 B]
-Get:6 http://deb.debian.org/debian-security trixie-security/main arm64 Packages [216 kB]
-Fetched 9921 kB in 11s (895 kB/s)
-Reading package lists...
-Reading package lists...
-Building dependency tree...
-Reading state information...
-The following additional packages will be installed:
-  binutils binutils-aarch64-linux-gnu binutils-common cpp cpp-14
-  cpp-14-aarch64-linux-gnu cpp-aarch64-linux-gnu gcc-14
-  gcc-14-aarch64-linux-gnu gcc-aarch64-linux-gnu iproute2 javascript-common
-  krb5-locales libasan8 libatomic1 libbinutils libbpf1 libc-dev-bin libc6-dev
-  libcap2-bin libcc1-0 libcom-err2 libcrypt-dev libctf-nobfd0 libctf0
-  libelf1t64 libexpat1 libexpat1-dev libgcc-14-dev libgomp1 libgprofng0
-  libgssapi-krb5-2 libhwasan0 libisl23 libitm1 libjansson4 libjs-jquery
-  libjs-sphinxdoc libjs-underscore libk5crypto3 libkeyutils1 libkrb5-3
-  libkrb5support0 liblsan0 libmariadb3 libmnl0 libmpc3 libmpfr6 libpam-cap
-  libpkgconf3 libpython3-dev libpython3-stdlib libpython3.13 libpython3.13-dev
-  libpython3.13-minimal libpython3.13-stdlib libsframe1 libssl-dev
-  libtirpc-common libtirpc3t64 libtsan2 libubsan1 libxtables12 linux-libc-dev
-  manpages manpages-dev mariadb-common media-types mysql-common nginx-common
-  pkgconf pkgconf-bin python3 python3-minimal python3.13 python3.13-dev
-  python3.13-minimal rpcsvc-proto zlib1g-dev
-Suggested packages:
-  binutils-doc gprofng-gui binutils-gold cpp-doc gcc-14-locales cpp-14-doc
-  gcc-multilib make autoconf automake libtool flex bison gdb gcc-doc
-  gcc-14-doc gdb-aarch64-linux-gnu libc-devtools glibc-doc krb5-doc krb5-user
-  libssl-doc man-browser fcgiwrap nginx-doc ssl-cert python3-doc python3-tk
-  python3-venv python3.13-venv python3.13-doc binfmt-support
-The following NEW packages will be installed:
-  binutils binutils-aarch64-linux-gnu binutils-common cpp cpp-14
-  cpp-14-aarch64-linux-gnu cpp-aarch64-linux-gnu gcc gcc-14
-  gcc-14-aarch64-linux-gnu gcc-aarch64-linux-gnu gettext-base iproute2
-  javascript-common krb5-locales libasan8 libatomic1 libbinutils libbpf1
-  libc-dev-bin libc6-dev libcap2-bin libcc1-0 libcom-err2 libcrypt-dev
-  libctf-nobfd0 libctf0 libelf1t64 libexpat1 libexpat1-dev libgcc-14-dev
-  libgomp1 libgprofng0 libgssapi-krb5-2 libhwasan0 libisl23 libitm1
-  libjansson4 libjs-jquery libjs-sphinxdoc libjs-underscore libk5crypto3
-  libkeyutils1 libkrb5-3 libkrb5support0 liblsan0 libmariadb-dev libmariadb3
-  libmnl0 libmpc3 libmpfr6 libpam-cap libpkgconf3 libpython3-dev
-  libpython3-stdlib libpython3.13 libpython3.13-dev libpython3.13-minimal
-  libpython3.13-stdlib libsframe1 libssl-dev libtirpc-common libtirpc3t64
-  libtsan2 libubsan1 libxtables12 linux-libc-dev manpages manpages-dev
-  mariadb-common media-types mysql-common nginx nginx-common pkg-config
-  pkgconf pkgconf-bin python3 python3-dev python3-minimal python3.13
-  python3.13-dev python3.13-minimal rpcsvc-proto zlib1g-dev
-0 upgraded, 85 newly installed, 0 to remove and 0 not upgraded.
-Need to get 75.2 MB of archives.
-After this operation, 305 MB of additional disk space will be used.
-Get:1 http://deb.debian.org/debian trixie/main arm64 libexpat1 arm64 2.7.1-2 [93.3 kB]
-Get:2 http://deb.debian.org/debian trixie/main arm64 libpython3.13-minimal arm64 3.13.5-2+deb13u2 [856 kB]
-Get:3 http://deb.debian.org/debian trixie/main arm64 python3.13-minimal arm64 3.13.5-2+deb13u2 [2002 kB]
-Get:4 http://deb.debian.org/debian trixie/main arm64 python3-minimal arm64 3.13.5-1 [27.2 kB]
-Get:5 http://deb.debian.org/debian trixie/main arm64 media-types all 13.0.0 [29.3 kB]
-Get:6 http://deb.debian.org/debian trixie/main arm64 libpython3.13-stdlib arm64 3.13.5-2+deb13u2 [1894 kB]
-Get:7 http://deb.debian.org/debian trixie/main arm64 python3.13 arm64 3.13.5-2+deb13u2 [757 kB]
-Get:8 http://deb.debian.org/debian trixie/main arm64 libpython3-stdlib arm64 3.13.5-1 [10.2 kB]
-Get:9 http://deb.debian.org/debian trixie/main arm64 python3 arm64 3.13.5-1 [28.2 kB]
-Get:10 http://deb.debian.org/debian trixie/main arm64 libelf1t64 arm64 0.192-4 [189 kB]
-Get:11 http://deb.debian.org/debian trixie/main arm64 libbpf1 arm64 1:1.5.0-3 [159 kB]
-Get:12 http://deb.debian.org/debian trixie/main arm64 libmnl0 arm64 1.0.5-3 [11.9 kB]
-Get:13 http://deb.debian.org/debian-security trixie-security/main arm64 libkrb5support0 arm64 1.21.3-5+deb13u1 [32.5 kB]
-Get:14 http://deb.debian.org/debian trixie/main arm64 libcom-err2 arm64 1.47.2-3+b11 [24.9 kB]
-Get:15 http://deb.debian.org/debian-security trixie-security/main arm64 libk5crypto3 arm64 1.21.3-5+deb13u1 [81.4 kB]
-Get:16 http://deb.debian.org/debian trixie/main arm64 libkeyutils1 arm64 1.6.3-6 [9716 B]
-Get:17 http://deb.debian.org/debian-security trixie-security/main arm64 libkrb5-3 arm64 1.21.3-5+deb13u1 [308 kB]
-Get:18 http://deb.debian.org/debian-security trixie-security/main arm64 libgssapi-krb5-2 arm64 1.21.3-5+deb13u1 [128 kB]
-Get:19 http://deb.debian.org/debian trixie/main arm64 libtirpc-common all 1.3.6+ds-1 [11.0 kB]
-Get:20 http://deb.debian.org/debian trixie/main arm64 libtirpc3t64 arm64 1.3.6+ds-1 [79.1 kB]
-Get:21 http://deb.debian.org/debian trixie/main arm64 libxtables12 arm64 1.8.11-2 [30.6 kB]
-Get:22 http://deb.debian.org/debian trixie/main arm64 libcap2-bin arm64 1:2.75-10+deb13u1+b1 [35.5 kB]
-Get:23 http://deb.debian.org/debian trixie/main arm64 iproute2 arm64 6.15.0-1 [1050 kB]
-Get:24 http://deb.debian.org/debian trixie/main arm64 gettext-base arm64 0.23.1-2 [241 kB]
-Get:25 http://deb.debian.org/debian-security trixie-security/main arm64 krb5-locales all 1.21.3-5+deb13u1 [101 kB]
-Get:26 http://deb.debian.org/debian trixie/main arm64 manpages all 6.9.1-1 [1393 kB]
-Get:27 http://deb.debian.org/debian trixie/main arm64 libsframe1 arm64 2.44-3 [77.8 kB]
-Get:28 http://deb.debian.org/debian trixie/main arm64 binutils-common arm64 2.44-3 [2509 kB]
-Get:29 http://deb.debian.org/debian trixie/main arm64 libbinutils arm64 2.44-3 [660 kB]
-Get:30 http://deb.debian.org/debian trixie/main arm64 libgprofng0 arm64 2.44-3 [668 kB]
-Get:31 http://deb.debian.org/debian trixie/main arm64 libctf-nobfd0 arm64 2.44-3 [152 kB]
-Get:32 http://deb.debian.org/debian trixie/main arm64 libctf0 arm64 2.44-3 [84.2 kB]
-Get:33 http://deb.debian.org/debian trixie/main arm64 libjansson4 arm64 2.14-2+b3 [39.2 kB]
-Get:34 http://deb.debian.org/debian trixie/main arm64 binutils-aarch64-linux-gnu arm64 2.44-3 [820 kB]
-Get:35 http://deb.debian.org/debian trixie/main arm64 binutils arm64 2.44-3 [262 kB]
-Get:36 http://deb.debian.org/debian trixie/main arm64 libisl23 arm64 0.27-1 [601 kB]
-Get:37 http://deb.debian.org/debian trixie/main arm64 libmpfr6 arm64 4.2.2-1 [685 kB]
-Get:38 http://deb.debian.org/debian trixie/main arm64 libmpc3 arm64 1.3.1-1+b3 [50.5 kB]
-Get:39 http://deb.debian.org/debian trixie/main arm64 cpp-14-aarch64-linux-gnu arm64 14.2.0-19 [9169 kB]
-Get:40 http://deb.debian.org/debian trixie/main arm64 cpp-14 arm64 14.2.0-19 [1276 B]
-Get:41 http://deb.debian.org/debian trixie/main arm64 cpp-aarch64-linux-gnu arm64 4:14.2.0-1 [4832 B]
-Get:42 http://deb.debian.org/debian trixie/main arm64 cpp arm64 4:14.2.0-1 [1568 B]
-Get:43 http://deb.debian.org/debian trixie/main arm64 libcc1-0 arm64 14.2.0-19 [42.2 kB]
-Get:44 http://deb.debian.org/debian trixie/main arm64 libgomp1 arm64 14.2.0-19 [124 kB]
-Get:45 http://deb.debian.org/debian trixie/main arm64 libitm1 arm64 14.2.0-19 [24.2 kB]
-Get:46 http://deb.debian.org/debian trixie/main arm64 libatomic1 arm64 14.2.0-19 [10.1 kB]
-Get:47 http://deb.debian.org/debian trixie/main arm64 libasan8 arm64 14.2.0-19 [2578 kB]
-Get:48 http://deb.debian.org/debian trixie/main arm64 liblsan0 arm64 14.2.0-19 [1161 kB]
-Get:49 http://deb.debian.org/debian trixie/main arm64 libtsan2 arm64 14.2.0-19 [2383 kB]
-Get:50 http://deb.debian.org/debian trixie/main arm64 libubsan1 arm64 14.2.0-19 [1039 kB]
-Get:51 http://deb.debian.org/debian trixie/main arm64 libhwasan0 arm64 14.2.0-19 [1442 kB]
-Get:52 http://deb.debian.org/debian trixie/main arm64 libgcc-14-dev arm64 14.2.0-19 [2359 kB]
-Get:53 http://deb.debian.org/debian trixie/main arm64 gcc-14-aarch64-linux-gnu arm64 14.2.0-19 [17.7 MB]
-Get:54 http://deb.debian.org/debian trixie/main arm64 gcc-14 arm64 14.2.0-19 [529 kB]
-Get:55 http://deb.debian.org/debian trixie/main arm64 gcc-aarch64-linux-gnu arm64 4:14.2.0-1 [1440 B]
-Get:56 http://deb.debian.org/debian trixie/main arm64 gcc arm64 4:14.2.0-1 [5136 B]
-Get:57 http://deb.debian.org/debian trixie/main arm64 javascript-common all 12+nmu1 [4864 B]
-Get:58 http://deb.debian.org/debian trixie/main arm64 libc-dev-bin arm64 2.41-12+deb13u3 [59.0 kB]
-Get:59 http://deb.debian.org/debian-security trixie-security/main arm64 linux-libc-dev all 6.12.90-2 [2813 kB]
-Get:60 http://deb.debian.org/debian trixie/main arm64 libcrypt-dev arm64 1:4.4.38-1 [123 kB]
-Get:61 http://deb.debian.org/debian trixie/main arm64 rpcsvc-proto arm64 1.4.3-1+b1 [60.5 kB]
-Get:62 http://deb.debian.org/debian trixie/main arm64 libc6-dev arm64 2.41-12+deb13u3 [1626 kB]
-Get:63 http://deb.debian.org/debian trixie/main arm64 libexpat1-dev arm64 2.7.1-2 [145 kB]
-Get:64 http://deb.debian.org/debian trixie/main arm64 libjs-jquery all 3.6.1+dfsg+~3.5.14-1 [326 kB]
-Get:65 http://deb.debian.org/debian trixie/main arm64 libjs-underscore all 1.13.4~dfsg+~1.11.4-3 [116 kB]
-Get:66 http://deb.debian.org/debian trixie/main arm64 libjs-sphinxdoc all 8.1.3-5 [30.5 kB]
-Get:67 http://deb.debian.org/debian trixie/main arm64 mysql-common all 5.8+1.1.1 [6784 B]
-Get:68 http://deb.debian.org/debian trixie/main arm64 mariadb-common all 1:11.8.6-0+deb13u1 [29.5 kB]
-Get:69 http://deb.debian.org/debian trixie/main arm64 libmariadb3 arm64 1:11.8.6-0+deb13u1 [175 kB]
-Get:70 http://deb.debian.org/debian-security trixie-security/main arm64 libssl-dev arm64 3.5.6-1~deb13u2 [3393 kB]
-Get:71 http://deb.debian.org/debian trixie/main arm64 zlib1g-dev arm64 1:1.3.dfsg+really1.3.1-1+b1 [917 kB]
-Get:72 http://deb.debian.org/debian trixie/main arm64 libmariadb-dev arm64 1:11.8.6-0+deb13u1 [271 kB]
-Get:73 http://deb.debian.org/debian trixie/main arm64 libpam-cap arm64 1:2.75-10+deb13u1+b1 [16.6 kB]
-Get:74 http://deb.debian.org/debian trixie/main arm64 libpkgconf3 arm64 1.8.1-4 [35.3 kB]
-Get:75 http://deb.debian.org/debian trixie/main arm64 libpython3.13 arm64 3.13.5-2+deb13u2 [1977 kB]
-Get:76 http://deb.debian.org/debian trixie/main arm64 libpython3.13-dev arm64 3.13.5-2+deb13u2 [4926 kB]
-Get:77 http://deb.debian.org/debian trixie/main arm64 libpython3-dev arm64 3.13.5-1 [10.4 kB]
-Get:78 http://deb.debian.org/debian trixie/main arm64 manpages-dev all 6.9.1-1 [2122 kB]
-Get:79 http://deb.debian.org/debian-security trixie-security/main arm64 nginx-common all 1.26.3-3+deb13u6 [111 kB]
-Get:80 http://deb.debian.org/debian-security trixie-security/main arm64 nginx arm64 1.26.3-3+deb13u6 [570 kB]
-Get:81 http://deb.debian.org/debian trixie/main arm64 pkgconf-bin arm64 1.8.1-4 [29.6 kB]
-Get:82 http://deb.debian.org/debian trixie/main arm64 pkgconf arm64 1.8.1-4 [26.1 kB]
-Get:83 http://deb.debian.org/debian trixie/main arm64 pkg-config arm64 1.8.1-4 [14.0 kB]
-Get:84 http://deb.debian.org/debian trixie/main arm64 python3.13-dev arm64 3.13.5-2+deb13u2 [504 kB]
-Get:85 http://deb.debian.org/debian trixie/main arm64 python3-dev arm64 3.13.5-1 [26.1 kB]
-debconf: unable to initialize frontend: Dialog
-debconf: (TERM is not set, so the dialog frontend is not usable.)
-debconf: falling back to frontend: Readline
-debconf: unable to initialize frontend: Readline
-debconf: (Can't locate Term/ReadLine.pm in @INC (you may need to install the Term::ReadLine module) (@INC entries checked: /etc/perl /usr/local/lib/aarch64-linux-gnu/perl/5.40.1 /usr/local/share/perl/5.40.1 /usr/lib/aarch64-linux-gnu/perl5/5.40 /usr/share/perl5 /usr/lib/aarch64-linux-gnu/perl-base /usr/lib/aarch64-linux-gnu/perl/5.40 /usr/share/perl/5.40 /usr/local/lib/site_perl) at /usr/share/perl5/Debconf/FrontEnd/Readline.pm line 8, <STDIN> line 85.)
-debconf: falling back to frontend: Teletype
-debconf: unable to initialize frontend: Teletype
-debconf: (This frontend requires a controlling tty.)
-debconf: falling back to frontend: Noninteractive
-Preconfiguring packages ...
-Fetched 75.2 MB in 13s (5634 kB/s)
-Selecting previously unselected package libexpat1:arm64.
-(Reading database ... (Reading database ... 5%(Reading database ... 10%(Reading database ... 15%(Reading database ... 20%(Reading database ... 25%(Reading database ... 30%(Reading database ... 35%(Reading database ... 40%(Reading database ... 45%(Reading database ... 50%(Reading database ... 55%(Reading database ... 60%(Reading database ... 65%(Reading database ... 70%(Reading database ... 75%(Reading database ... 80%(Reading database ... 85%(Reading database ... 90%(Reading database ... 95%(Reading database ... 100%(Reading database ... 5642 files and directories currently installed.)
-Preparing to unpack .../libexpat1_2.7.1-2_arm64.deb ...
-Unpacking libexpat1:arm64 (2.7.1-2) ...
-Selecting previously unselected package libpython3.13-minimal:arm64.
-Preparing to unpack .../libpython3.13-minimal_3.13.5-2+deb13u2_arm64.deb ...
-Unpacking libpython3.13-minimal:arm64 (3.13.5-2+deb13u2) ...
-Selecting previously unselected package python3.13-minimal.
-Preparing to unpack .../python3.13-minimal_3.13.5-2+deb13u2_arm64.deb ...
-Unpacking python3.13-minimal (3.13.5-2+deb13u2) ...
-Setting up libpython3.13-minimal:arm64 (3.13.5-2+deb13u2) ...
-Setting up libexpat1:arm64 (2.7.1-2) ...
-Setting up python3.13-minimal (3.13.5-2+deb13u2) ...
-Selecting previously unselected package python3-minimal.
-(Reading database ... (Reading database ... 5%(Reading database ... 10%(Reading database ... 15%(Reading database ... 20%(Reading database ... 25%(Reading database ... 30%(Reading database ... 35%(Reading database ... 40%(Reading database ... 45%(Reading database ... 50%(Reading database ... 55%(Reading database ... 60%(Reading database ... 65%(Reading database ... 70%(Reading database ... 75%(Reading database ... 80%(Reading database ... 85%(Reading database ... 90%(Reading database ... 95%(Reading database ... 100%(Reading database ... 5976 files and directories currently installed.)
-Preparing to unpack .../python3-minimal_3.13.5-1_arm64.deb ...
-Unpacking python3-minimal (3.13.5-1) ...
-Selecting previously unselected package media-types.
-Preparing to unpack .../media-types_13.0.0_all.deb ...
-Unpacking media-types (13.0.0) ...
-Selecting previously unselected package libpython3.13-stdlib:arm64.
-Preparing to unpack .../libpython3.13-stdlib_3.13.5-2+deb13u2_arm64.deb ...
-Unpacking libpython3.13-stdlib:arm64 (3.13.5-2+deb13u2) ...
-Selecting previously unselected package python3.13.
-Preparing to unpack .../python3.13_3.13.5-2+deb13u2_arm64.deb ...
-Unpacking python3.13 (3.13.5-2+deb13u2) ...
-Selecting previously unselected package libpython3-stdlib:arm64.
-Preparing to unpack .../libpython3-stdlib_3.13.5-1_arm64.deb ...
-Unpacking libpython3-stdlib:arm64 (3.13.5-1) ...
-Setting up python3-minimal (3.13.5-1) ...
-Selecting previously unselected package python3.
-(Reading database ... (Reading database ... 5%(Reading database ... 10%(Reading database ... 15%(Reading database ... 20%(Reading database ... 25%(Reading database ... 30%(Reading database ... 35%(Reading database ... 40%(Reading database ... 45%(Reading database ... 50%(Reading database ... 55%(Reading database ... 60%(Reading database ... 65%(Reading database ... 70%(Reading database ... 75%(Reading database ... 80%(Reading database ... 85%(Reading database ... 90%(Reading database ... 95%(Reading database ... 100%(Reading database ... 6430 files and directories currently installed.)
-Preparing to unpack .../00-python3_3.13.5-1_arm64.deb ...
-Unpacking python3 (3.13.5-1) ...
-Selecting previously unselected package libelf1t64:arm64.
-Preparing to unpack .../01-libelf1t64_0.192-4_arm64.deb ...
-Unpacking libelf1t64:arm64 (0.192-4) ...
-Selecting previously unselected package libbpf1:arm64.
-Preparing to unpack .../02-libbpf1_1%3a1.5.0-3_arm64.deb ...
-Unpacking libbpf1:arm64 (1:1.5.0-3) ...
-Selecting previously unselected package libmnl0:arm64.
-Preparing to unpack .../03-libmnl0_1.0.5-3_arm64.deb ...
-Unpacking libmnl0:arm64 (1.0.5-3) ...
-Selecting previously unselected package libkrb5support0:arm64.
-Preparing to unpack .../04-libkrb5support0_1.21.3-5+deb13u1_arm64.deb ...
-Unpacking libkrb5support0:arm64 (1.21.3-5+deb13u1) ...
-Selecting previously unselected package libcom-err2:arm64.
-Preparing to unpack .../05-libcom-err2_1.47.2-3+b11_arm64.deb ...
-Unpacking libcom-err2:arm64 (1.47.2-3+b11) ...
-Selecting previously unselected package libk5crypto3:arm64.
-Preparing to unpack .../06-libk5crypto3_1.21.3-5+deb13u1_arm64.deb ...
-Unpacking libk5crypto3:arm64 (1.21.3-5+deb13u1) ...
-Selecting previously unselected package libkeyutils1:arm64.
-Preparing to unpack .../07-libkeyutils1_1.6.3-6_arm64.deb ...
-Unpacking libkeyutils1:arm64 (1.6.3-6) ...
-Selecting previously unselected package libkrb5-3:arm64.
-Preparing to unpack .../08-libkrb5-3_1.21.3-5+deb13u1_arm64.deb ...
-Unpacking libkrb5-3:arm64 (1.21.3-5+deb13u1) ...
-Selecting previously unselected package libgssapi-krb5-2:arm64.
-Preparing to unpack .../09-libgssapi-krb5-2_1.21.3-5+deb13u1_arm64.deb ...
-Unpacking libgssapi-krb5-2:arm64 (1.21.3-5+deb13u1) ...
-Selecting previously unselected package libtirpc-common.
-Preparing to unpack .../10-libtirpc-common_1.3.6+ds-1_all.deb ...
-Unpacking libtirpc-common (1.3.6+ds-1) ...
-Selecting previously unselected package libtirpc3t64:arm64.
-Preparing to unpack .../11-libtirpc3t64_1.3.6+ds-1_arm64.deb ...
-Adding 'diversion of /lib/aarch64-linux-gnu/libtirpc.so.3 to /lib/aarch64-linux-gnu/libtirpc.so.3.usr-is-merged by libtirpc3t64'
-Adding 'diversion of /lib/aarch64-linux-gnu/libtirpc.so.3.0.0 to /lib/aarch64-linux-gnu/libtirpc.so.3.0.0.usr-is-merged by libtirpc3t64'
-Unpacking libtirpc3t64:arm64 (1.3.6+ds-1) ...
-Selecting previously unselected package libxtables12:arm64.
-Preparing to unpack .../12-libxtables12_1.8.11-2_arm64.deb ...
-Unpacking libxtables12:arm64 (1.8.11-2) ...
-Selecting previously unselected package libcap2-bin.
-Preparing to unpack .../13-libcap2-bin_1%3a2.75-10+deb13u1+b1_arm64.deb ...
-Unpacking libcap2-bin (1:2.75-10+deb13u1+b1) ...
-Selecting previously unselected package iproute2.
-Preparing to unpack .../14-iproute2_6.15.0-1_arm64.deb ...
-Unpacking iproute2 (6.15.0-1) ...
-Selecting previously unselected package gettext-base.
-Preparing to unpack .../15-gettext-base_0.23.1-2_arm64.deb ...
-Unpacking gettext-base (0.23.1-2) ...
-Selecting previously unselected package krb5-locales.
-Preparing to unpack .../16-krb5-locales_1.21.3-5+deb13u1_all.deb ...
-Unpacking krb5-locales (1.21.3-5+deb13u1) ...
-Selecting previously unselected package manpages.
-Preparing to unpack .../17-manpages_6.9.1-1_all.deb ...
-Unpacking manpages (6.9.1-1) ...
-Selecting previously unselected package libsframe1:arm64.
-Preparing to unpack .../18-libsframe1_2.44-3_arm64.deb ...
-Unpacking libsframe1:arm64 (2.44-3) ...
-Selecting previously unselected package binutils-common:arm64.
-Preparing to unpack .../19-binutils-common_2.44-3_arm64.deb ...
-Unpacking binutils-common:arm64 (2.44-3) ...
-Selecting previously unselected package libbinutils:arm64.
-Preparing to unpack .../20-libbinutils_2.44-3_arm64.deb ...
-Unpacking libbinutils:arm64 (2.44-3) ...
-Selecting previously unselected package libgprofng0:arm64.
-Preparing to unpack .../21-libgprofng0_2.44-3_arm64.deb ...
-Unpacking libgprofng0:arm64 (2.44-3) ...
-Selecting previously unselected package libctf-nobfd0:arm64.
-Preparing to unpack .../22-libctf-nobfd0_2.44-3_arm64.deb ...
-Unpacking libctf-nobfd0:arm64 (2.44-3) ...
-Selecting previously unselected package libctf0:arm64.
-Preparing to unpack .../23-libctf0_2.44-3_arm64.deb ...
-Unpacking libctf0:arm64 (2.44-3) ...
-Selecting previously unselected package libjansson4:arm64.
-Preparing to unpack .../24-libjansson4_2.14-2+b3_arm64.deb ...
-Unpacking libjansson4:arm64 (2.14-2+b3) ...
-Selecting previously unselected package binutils-aarch64-linux-gnu.
-Preparing to unpack .../25-binutils-aarch64-linux-gnu_2.44-3_arm64.deb ...
-Unpacking binutils-aarch64-linux-gnu (2.44-3) ...
-Selecting previously unselected package binutils.
-Preparing to unpack .../26-binutils_2.44-3_arm64.deb ...
-Unpacking binutils (2.44-3) ...
-Selecting previously unselected package libisl23:arm64.
-Preparing to unpack .../27-libisl23_0.27-1_arm64.deb ...
-Unpacking libisl23:arm64 (0.27-1) ...
-Selecting previously unselected package libmpfr6:arm64.
-Preparing to unpack .../28-libmpfr6_4.2.2-1_arm64.deb ...
-Unpacking libmpfr6:arm64 (4.2.2-1) ...
-Selecting previously unselected package libmpc3:arm64.
-Preparing to unpack .../29-libmpc3_1.3.1-1+b3_arm64.deb ...
-Unpacking libmpc3:arm64 (1.3.1-1+b3) ...
-Selecting previously unselected package cpp-14-aarch64-linux-gnu.
-Preparing to unpack .../30-cpp-14-aarch64-linux-gnu_14.2.0-19_arm64.deb ...
-Unpacking cpp-14-aarch64-linux-gnu (14.2.0-19) ...
-Selecting previously unselected package cpp-14.
-Preparing to unpack .../31-cpp-14_14.2.0-19_arm64.deb ...
-Unpacking cpp-14 (14.2.0-19) ...
-Selecting previously unselected package cpp-aarch64-linux-gnu.
-Preparing to unpack .../32-cpp-aarch64-linux-gnu_4%3a14.2.0-1_arm64.deb ...
-Unpacking cpp-aarch64-linux-gnu (4:14.2.0-1) ...
-Selecting previously unselected package cpp.
-Preparing to unpack .../33-cpp_4%3a14.2.0-1_arm64.deb ...
-Unpacking cpp (4:14.2.0-1) ...
-Selecting previously unselected package libcc1-0:arm64.
-Preparing to unpack .../34-libcc1-0_14.2.0-19_arm64.deb ...
-Unpacking libcc1-0:arm64 (14.2.0-19) ...
-Selecting previously unselected package libgomp1:arm64.
-Preparing to unpack .../35-libgomp1_14.2.0-19_arm64.deb ...
-Unpacking libgomp1:arm64 (14.2.0-19) ...
-Selecting previously unselected package libitm1:arm64.
-Preparing to unpack .../36-libitm1_14.2.0-19_arm64.deb ...
-Unpacking libitm1:arm64 (14.2.0-19) ...
-Selecting previously unselected package libatomic1:arm64.
-Preparing to unpack .../37-libatomic1_14.2.0-19_arm64.deb ...
-Unpacking libatomic1:arm64 (14.2.0-19) ...
-Selecting previously unselected package libasan8:arm64.
-Preparing to unpack .../38-libasan8_14.2.0-19_arm64.deb ...
-Unpacking libasan8:arm64 (14.2.0-19) ...
-Selecting previously unselected package liblsan0:arm64.
-Preparing to unpack .../39-liblsan0_14.2.0-19_arm64.deb ...
-Unpacking liblsan0:arm64 (14.2.0-19) ...
-Selecting previously unselected package libtsan2:arm64.
-Preparing to unpack .../40-libtsan2_14.2.0-19_arm64.deb ...
-Unpacking libtsan2:arm64 (14.2.0-19) ...
-Selecting previously unselected package libubsan1:arm64.
-Preparing to unpack .../41-libubsan1_14.2.0-19_arm64.deb ...
-Unpacking libubsan1:arm64 (14.2.0-19) ...
-Selecting previously unselected package libhwasan0:arm64.
-Preparing to unpack .../42-libhwasan0_14.2.0-19_arm64.deb ...
-Unpacking libhwasan0:arm64 (14.2.0-19) ...
-Selecting previously unselected package libgcc-14-dev:arm64.
-Preparing to unpack .../43-libgcc-14-dev_14.2.0-19_arm64.deb ...
-Unpacking libgcc-14-dev:arm64 (14.2.0-19) ...
-Selecting previously unselected package gcc-14-aarch64-linux-gnu.
-Preparing to unpack .../44-gcc-14-aarch64-linux-gnu_14.2.0-19_arm64.deb ...
-Unpacking gcc-14-aarch64-linux-gnu (14.2.0-19) ...
-Selecting previously unselected package gcc-14.
-Preparing to unpack .../45-gcc-14_14.2.0-19_arm64.deb ...
-Unpacking gcc-14 (14.2.0-19) ...
-Selecting previously unselected package gcc-aarch64-linux-gnu.
-Preparing to unpack .../46-gcc-aarch64-linux-gnu_4%3a14.2.0-1_arm64.deb ...
-Unpacking gcc-aarch64-linux-gnu (4:14.2.0-1) ...
-Selecting previously unselected package gcc.
-Preparing to unpack .../47-gcc_4%3a14.2.0-1_arm64.deb ...
-Unpacking gcc (4:14.2.0-1) ...
-Selecting previously unselected package javascript-common.
-Preparing to unpack .../48-javascript-common_12+nmu1_all.deb ...
-Unpacking javascript-common (12+nmu1) ...
-Selecting previously unselected package libc-dev-bin.
-Preparing to unpack .../49-libc-dev-bin_2.41-12+deb13u3_arm64.deb ...
-Unpacking libc-dev-bin (2.41-12+deb13u3) ...
-Selecting previously unselected package linux-libc-dev.
-Preparing to unpack .../50-linux-libc-dev_6.12.90-2_all.deb ...
-Unpacking linux-libc-dev (6.12.90-2) ...
-Selecting previously unselected package libcrypt-dev:arm64.
-Preparing to unpack .../51-libcrypt-dev_1%3a4.4.38-1_arm64.deb ...
-Unpacking libcrypt-dev:arm64 (1:4.4.38-1) ...
-Selecting previously unselected package rpcsvc-proto.
-Preparing to unpack .../52-rpcsvc-proto_1.4.3-1+b1_arm64.deb ...
-Unpacking rpcsvc-proto (1.4.3-1+b1) ...
-Selecting previously unselected package libc6-dev:arm64.
-Preparing to unpack .../53-libc6-dev_2.41-12+deb13u3_arm64.deb ...
-Unpacking libc6-dev:arm64 (2.41-12+deb13u3) ...
-Selecting previously unselected package libexpat1-dev:arm64.
-Preparing to unpack .../54-libexpat1-dev_2.7.1-2_arm64.deb ...
-Unpacking libexpat1-dev:arm64 (2.7.1-2) ...
-Selecting previously unselected package libjs-jquery.
-Preparing to unpack .../55-libjs-jquery_3.6.1+dfsg+~3.5.14-1_all.deb ...
-Unpacking libjs-jquery (3.6.1+dfsg+~3.5.14-1) ...
-Selecting previously unselected package libjs-underscore.
-Preparing to unpack .../56-libjs-underscore_1.13.4~dfsg+~1.11.4-3_all.deb ...
-Unpacking libjs-underscore (1.13.4~dfsg+~1.11.4-3) ...
-Selecting previously unselected package libjs-sphinxdoc.
-Preparing to unpack .../57-libjs-sphinxdoc_8.1.3-5_all.deb ...
-Unpacking libjs-sphinxdoc (8.1.3-5) ...
-Selecting previously unselected package mysql-common.
-Preparing to unpack .../58-mysql-common_5.8+1.1.1_all.deb ...
-Unpacking mysql-common (5.8+1.1.1) ...
-Selecting previously unselected package mariadb-common.
-Preparing to unpack .../59-mariadb-common_1%3a11.8.6-0+deb13u1_all.deb ...
-Unpacking mariadb-common (1:11.8.6-0+deb13u1) ...
-Selecting previously unselected package libmariadb3:arm64.
-Preparing to unpack .../60-libmariadb3_1%3a11.8.6-0+deb13u1_arm64.deb ...
-Unpacking libmariadb3:arm64 (1:11.8.6-0+deb13u1) ...
-Selecting previously unselected package libssl-dev:arm64.
-Preparing to unpack .../61-libssl-dev_3.5.6-1~deb13u2_arm64.deb ...
-Unpacking libssl-dev:arm64 (3.5.6-1~deb13u2) ...
-Selecting previously unselected package zlib1g-dev:arm64.
-Preparing to unpack .../62-zlib1g-dev_1%3a1.3.dfsg+really1.3.1-1+b1_arm64.deb ...
-Unpacking zlib1g-dev:arm64 (1:1.3.dfsg+really1.3.1-1+b1) ...
-Selecting previously unselected package libmariadb-dev.
-Preparing to unpack .../63-libmariadb-dev_1%3a11.8.6-0+deb13u1_arm64.deb ...
-Unpacking libmariadb-dev (1:11.8.6-0+deb13u1) ...
-Selecting previously unselected package libpam-cap:arm64.
-Preparing to unpack .../64-libpam-cap_1%3a2.75-10+deb13u1+b1_arm64.deb ...
-Unpacking libpam-cap:arm64 (1:2.75-10+deb13u1+b1) ...
-Selecting previously unselected package libpkgconf3:arm64.
-Preparing to unpack .../65-libpkgconf3_1.8.1-4_arm64.deb ...
-Unpacking libpkgconf3:arm64 (1.8.1-4) ...
-Selecting previously unselected package libpython3.13:arm64.
-Preparing to unpack .../66-libpython3.13_3.13.5-2+deb13u2_arm64.deb ...
-Unpacking libpython3.13:arm64 (3.13.5-2+deb13u2) ...
-Selecting previously unselected package libpython3.13-dev:arm64.
-Preparing to unpack .../67-libpython3.13-dev_3.13.5-2+deb13u2_arm64.deb ...
-Unpacking libpython3.13-dev:arm64 (3.13.5-2+deb13u2) ...
-Selecting previously unselected package libpython3-dev:arm64.
-Preparing to unpack .../68-libpython3-dev_3.13.5-1_arm64.deb ...
-Unpacking libpython3-dev:arm64 (3.13.5-1) ...
-Selecting previously unselected package manpages-dev.
-Preparing to unpack .../69-manpages-dev_6.9.1-1_all.deb ...
-Unpacking manpages-dev (6.9.1-1) ...
-Selecting previously unselected package nginx-common.
-Preparing to unpack .../70-nginx-common_1.26.3-3+deb13u6_all.deb ...
-Unpacking nginx-common (1.26.3-3+deb13u6) ...
-Selecting previously unselected package nginx.
-Preparing to unpack .../71-nginx_1.26.3-3+deb13u6_arm64.deb ...
-Unpacking nginx (1.26.3-3+deb13u6) ...
-Selecting previously unselected package pkgconf-bin.
-Preparing to unpack .../72-pkgconf-bin_1.8.1-4_arm64.deb ...
-Unpacking pkgconf-bin (1.8.1-4) ...
-Selecting previously unselected package pkgconf:arm64.
-Preparing to unpack .../73-pkgconf_1.8.1-4_arm64.deb ...
-Unpacking pkgconf:arm64 (1.8.1-4) ...
-Selecting previously unselected package pkg-config:arm64.
-Preparing to unpack .../74-pkg-config_1.8.1-4_arm64.deb ...
-Unpacking pkg-config:arm64 (1.8.1-4) ...
-Selecting previously unselected package python3.13-dev.
-Preparing to unpack .../75-python3.13-dev_3.13.5-2+deb13u2_arm64.deb ...
-Unpacking python3.13-dev (3.13.5-2+deb13u2) ...
-Selecting previously unselected package python3-dev.
-Preparing to unpack .../76-python3-dev_3.13.5-1_arm64.deb ...
-Unpacking python3-dev (3.13.5-1) ...
-Setting up media-types (13.0.0) ...
-Setting up javascript-common (12+nmu1) ...
-Setting up mysql-common (5.8+1.1.1) ...
-update-alternatives: using /etc/mysql/my.cnf.fallback to provide /etc/mysql/my.cnf (my.cnf) in auto mode
-Setting up libkeyutils1:arm64 (1.6.3-6) ...
-Setting up manpages (6.9.1-1) ...
-Setting up libtirpc-common (1.3.6+ds-1) ...
-Setting up binutils-common:arm64 (2.44-3) ...
-Setting up linux-libc-dev (6.12.90-2) ...
-Setting up libctf-nobfd0:arm64 (2.44-3) ...
-Setting up gettext-base (0.23.1-2) ...
-Setting up nginx-common (1.26.3-3+deb13u6) ...
-debconf: unable to initialize frontend: Dialog
-debconf: (TERM is not set, so the dialog frontend is not usable.)
-debconf: falling back to frontend: Readline
-debconf: unable to initialize frontend: Readline
-debconf: (Can't locate Term/ReadLine.pm in @INC (you may need to install the Term::ReadLine module) (@INC entries checked: /etc/perl /usr/local/lib/aarch64-linux-gnu/perl/5.40.1 /usr/local/share/perl/5.40.1 /usr/lib/aarch64-linux-gnu/perl5/5.40 /usr/share/perl5 /usr/lib/aarch64-linux-gnu/perl-base /usr/lib/aarch64-linux-gnu/perl/5.40 /usr/share/perl/5.40 /usr/local/lib/site_perl) at /usr/share/perl5/Debconf/FrontEnd/Readline.pm line 8.)
-debconf: falling back to frontend: Teletype
-debconf: unable to initialize frontend: Teletype
-debconf: (This frontend requires a controlling tty.)
-debconf: falling back to frontend: Noninteractive
-Setting up krb5-locales (1.21.3-5+deb13u1) ...
-Setting up libcom-err2:arm64 (1.47.2-3+b11) ...
-Setting up libgomp1:arm64 (14.2.0-19) ...
-Setting up libsframe1:arm64 (2.44-3) ...
-Setting up libelf1t64:arm64 (0.192-4) ...
-Setting up libjansson4:arm64 (2.14-2+b3) ...
-Setting up libkrb5support0:arm64 (1.21.3-5+deb13u1) ...
-Setting up libcap2-bin (1:2.75-10+deb13u1+b1) ...
-Setting up mariadb-common (1:11.8.6-0+deb13u1) ...
-update-alternatives: using /etc/mysql/mariadb.cnf to provide /etc/mysql/my.cnf (my.cnf) in auto mode
-Setting up libpkgconf3:arm64 (1.8.1-4) ...
-Setting up rpcsvc-proto (1.4.3-1+b1) ...
-Setting up libmpfr6:arm64 (4.2.2-1) ...
-Setting up libssl-dev:arm64 (3.5.6-1~deb13u2) ...
-Setting up libmpc3:arm64 (1.3.1-1+b3) ...
-Setting up libmnl0:arm64 (1.0.5-3) ...
-Setting up libatomic1:arm64 (14.2.0-19) ...
-Setting up libmariadb3:arm64 (1:11.8.6-0+deb13u1) ...
-Setting up pkgconf-bin (1.8.1-4) ...
-Setting up libk5crypto3:arm64 (1.21.3-5+deb13u1) ...
-Setting up libxtables12:arm64 (1.8.11-2) ...
-Setting up libubsan1:arm64 (14.2.0-19) ...
-Setting up libhwasan0:arm64 (14.2.0-19) ...
-Setting up libcrypt-dev:arm64 (1:4.4.38-1) ...
-Setting up libasan8:arm64 (14.2.0-19) ...
-Setting up libkrb5-3:arm64 (1.21.3-5+deb13u1) ...
-Setting up libtsan2:arm64 (14.2.0-19) ...
-Setting up libjs-jquery (3.6.1+dfsg+~3.5.14-1) ...
-Setting up libbinutils:arm64 (2.44-3) ...
-Setting up libisl23:arm64 (0.27-1) ...
-Setting up libc-dev-bin (2.41-12+deb13u3) ...
-Setting up libpam-cap:arm64 (1:2.75-10+deb13u1+b1) ...
-debconf: unable to initialize frontend: Dialog
-debconf: (TERM is not set, so the dialog frontend is not usable.)
-debconf: falling back to frontend: Readline
-debconf: unable to initialize frontend: Readline
-debconf: (Can't locate Term/ReadLine.pm in @INC (you may need to install the Term::ReadLine module) (@INC entries checked: /etc/perl /usr/local/lib/aarch64-linux-gnu/perl/5.40.1 /usr/local/share/perl/5.40.1 /usr/lib/aarch64-linux-gnu/perl5/5.40 /usr/share/perl5 /usr/lib/aarch64-linux-gnu/perl-base /usr/lib/aarch64-linux-gnu/perl/5.40 /usr/share/perl/5.40 /usr/local/lib/site_perl) at /usr/share/perl5/Debconf/FrontEnd/Readline.pm line 8.)
-debconf: falling back to frontend: Teletype
-debconf: unable to initialize frontend: Teletype
-debconf: (This frontend requires a controlling tty.)
-debconf: falling back to frontend: Noninteractive
-Setting up libpython3.13-stdlib:arm64 (3.13.5-2+deb13u2) ...
-Setting up libcc1-0:arm64 (14.2.0-19) ...
-Setting up libbpf1:arm64 (1:1.5.0-3) ...
-Setting up liblsan0:arm64 (14.2.0-19) ...
-Setting up libitm1:arm64 (14.2.0-19) ...
-Setting up libpython3-stdlib:arm64 (3.13.5-1) ...
-Setting up libjs-underscore (1.13.4~dfsg+~1.11.4-3) ...
-Setting up libctf0:arm64 (2.44-3) ...
-Setting up libpython3.13:arm64 (3.13.5-2+deb13u2) ...
-Setting up manpages-dev (6.9.1-1) ...
-Setting up python3.13 (3.13.5-2+deb13u2) ...
-Setting up binutils-aarch64-linux-gnu (2.44-3) ...
-Setting up python3 (3.13.5-1) ...
-running python rtupdate hooks for python3.13...
-running python post-rtupdate hooks for python3.13...
-Setting up pkgconf:arm64 (1.8.1-4) ...
-Setting up libgprofng0:arm64 (2.44-3) ...
-Setting up libgssapi-krb5-2:arm64 (1.21.3-5+deb13u1) ...
-Setting up pkg-config:arm64 (1.8.1-4) ...
-Setting up libjs-sphinxdoc (8.1.3-5) ...
-Setting up cpp-14-aarch64-linux-gnu (14.2.0-19) ...
-Setting up libc6-dev:arm64 (2.41-12+deb13u3) ...
-Setting up libgcc-14-dev:arm64 (14.2.0-19) ...
-Setting up libtirpc3t64:arm64 (1.3.6+ds-1) ...
-Setting up iproute2 (6.15.0-1) ...
-debconf: unable to initialize frontend: Dialog
-debconf: (TERM is not set, so the dialog frontend is not usable.)
-debconf: falling back to frontend: Readline
-debconf: unable to initialize frontend: Readline
-debconf: (Can't locate Term/ReadLine.pm in @INC (you may need to install the Term::ReadLine module) (@INC entries checked: /etc/perl /usr/local/lib/aarch64-linux-gnu/perl/5.40.1 /usr/local/share/perl/5.40.1 /usr/lib/aarch64-linux-gnu/perl5/5.40 /usr/share/perl5 /usr/lib/aarch64-linux-gnu/perl-base /usr/lib/aarch64-linux-gnu/perl/5.40 /usr/share/perl/5.40 /usr/local/lib/site_perl) at /usr/share/perl5/Debconf/FrontEnd/Readline.pm line 8.)
-debconf: falling back to frontend: Teletype
-debconf: unable to initialize frontend: Teletype
-debconf: (This frontend requires a controlling tty.)
-debconf: falling back to frontend: Noninteractive
-Setting up binutils (2.44-3) ...
-Setting up cpp-aarch64-linux-gnu (4:14.2.0-1) ...
-Setting up libexpat1-dev:arm64 (2.7.1-2) ...
-Setting up cpp-14 (14.2.0-19) ...
-Setting up zlib1g-dev:arm64 (1:1.3.dfsg+really1.3.1-1+b1) ...
-Setting up cpp (4:14.2.0-1) ...
-Setting up gcc-14-aarch64-linux-gnu (14.2.0-19) ...
-Setting up gcc-aarch64-linux-gnu (4:14.2.0-1) ...
-Setting up nginx (1.26.3-3+deb13u6) ...
-invoke-rc.d: could not determine current runlevel
-invoke-rc.d: policy-rc.d denied execution of start.
-Setting up gcc-14 (14.2.0-19) ...
-Setting up libpython3.13-dev:arm64 (3.13.5-2+deb13u2) ...
-Setting up libmariadb-dev (1:11.8.6-0+deb13u1) ...
-Setting up libpython3-dev:arm64 (3.13.5-1) ...
-Setting up python3.13-dev (3.13.5-2+deb13u2) ...
-Setting up gcc (4:14.2.0-1) ...
-Setting up python3-dev (3.13.5-1) ...
-Processing triggers for libc-bin (2.41-12+deb13u3) ...
---> 4323833f7248
-[2/2] STEP 3/21: ENV APP_HOME /app
---> dcf49ba76b1a
-[2/2] STEP 4/21: WORKDIR $APP_HOME
---> 0aefe35286b2
-[2/2] STEP 5/21: ENV PYTHONUNBUFFERED 1
---> e2a8f0bc9e23
-[2/2] STEP 6/21: COPY requirements.txt .
---> 0590fe1f61f5
-[2/2] STEP 7/21: RUN pip install --upgrade pip
-Requirement already satisfied: pip in /usr/local/lib/python3.12/site-packages (25.0.1)
-Collecting pip
-  Downloading pip-26.1.2-py3-none-any.whl.metadata (4.6 kB)
-Downloading pip-26.1.2-py3-none-any.whl (1.8 MB)
-   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 1.8/1.8 MB 23.6 MB/s eta 0:00:00
-Installing collected packages: pip
-  Attempting uninstall: pip
-    Found existing installation: pip 25.0.1
-    Uninstalling pip-25.0.1:
-      Successfully uninstalled pip-25.0.1
-Successfully installed pip-26.1.2
-WARNING: Running pip as the 'root' user can result in broken permissions and conflicting behaviour with the system package manager, possibly rendering your system unusable. It is recommended to use a virtual environment instead: https://pip.pypa.io/warnings/venv. Use the --root-user-action option if you know what you are doing and want to suppress this warning.
---> e515210a9a42
-[2/2] STEP 8/21: RUN pip install --no-cache-dir -r requirements.txt
-Collecting asgiref==3.8.1 (from -r requirements.txt (line 1))
-  Downloading asgiref-3.8.1-py3-none-any.whl.metadata (9.3 kB)
-Collecting Django==4.2.16 (from -r requirements.txt (line 2))
-  Downloading Django-4.2.16-py3-none-any.whl.metadata (4.1 kB)
-Collecting djangorestframework==3.15.2 (from -r requirements.txt (line 3))
-  Downloading djangorestframework-3.15.2-py3-none-any.whl.metadata (10 kB)
-Collecting mysqlclient==2.2.4 (from -r requirements.txt (line 4))
-  Downloading mysqlclient-2.2.4.tar.gz (90 kB)
-  Installing build dependencies: started
-  Installing build dependencies: finished with status 'done'
-  Getting requirements to build wheel: started
-  Getting requirements to build wheel: finished with status 'done'
-  Preparing metadata (pyproject.toml): started
-  Preparing metadata (pyproject.toml): finished with status 'done'
-Collecting pytz==2024.1 (from -r requirements.txt (line 5))
-  Downloading pytz-2024.1-py2.py3-none-any.whl.metadata (22 kB)
-Collecting sqlparse==0.5.1 (from -r requirements.txt (line 6))
-  Downloading sqlparse-0.5.1-py3-none-any.whl.metadata (3.9 kB)
-Collecting typing-extensions==4.12.2 (from -r requirements.txt (line 7))
-  Downloading typing_extensions-4.12.2-py3-none-any.whl.metadata (3.0 kB)
-Collecting django-environ==0.11.2 (from -r requirements.txt (line 8))
-  Downloading django_environ-0.11.2-py2.py3-none-any.whl.metadata (11 kB)
-Collecting djangorestframework-simplejwt==5.3.1 (from -r requirements.txt (line 9))
-  Downloading djangorestframework_simplejwt-5.3.1-py3-none-any.whl.metadata (4.3 kB)
-Collecting boto3==1.35.0 (from -r requirements.txt (line 10))
-  Downloading boto3-1.35.0-py3-none-any.whl.metadata (6.6 kB)
-Collecting django-storages==1.14.4 (from django-storages[s3]==1.14.4->-r requirements.txt (line 11))
-  Downloading django_storages-1.14.4-py3-none-any.whl.metadata (4.7 kB)
-Collecting gunicorn==22.0.0 (from -r requirements.txt (line 12))
-  Downloading gunicorn-22.0.0-py3-none-any.whl.metadata (4.4 kB)
-Collecting asymmetric_jwt_auth (from -r requirements.txt (line 13))
-  Downloading asymmetric_jwt_auth-1.2.1-py3-none-any.whl.metadata (3.5 kB)
-Collecting pyjwt<3,>=1.7.1 (from djangorestframework-simplejwt==5.3.1->-r requirements.txt (line 9))
-  Downloading pyjwt-2.13.0-py3-none-any.whl.metadata (3.4 kB)
-Collecting botocore<1.36.0,>=1.35.0 (from boto3==1.35.0->-r requirements.txt (line 10))
-  Downloading botocore-1.35.99-py3-none-any.whl.metadata (5.7 kB)
-Collecting jmespath<2.0.0,>=0.7.1 (from boto3==1.35.0->-r requirements.txt (line 10))
-  Downloading jmespath-1.1.0-py3-none-any.whl.metadata (7.6 kB)
-Collecting s3transfer<0.11.0,>=0.10.0 (from boto3==1.35.0->-r requirements.txt (line 10))
-  Downloading s3transfer-0.10.4-py3-none-any.whl.metadata (1.7 kB)
-Collecting packaging (from gunicorn==22.0.0->-r requirements.txt (line 12))
-  Downloading packaging-26.2-py3-none-any.whl.metadata (3.5 kB)
-Collecting python-dateutil<3.0.0,>=2.1 (from botocore<1.36.0,>=1.35.0->boto3==1.35.0->-r requirements.txt (line 10))
-  Downloading python_dateutil-2.9.0.post0-py2.py3-none-any.whl.metadata (8.4 kB)
-Collecting urllib3!=2.2.0,<3,>=1.25.4 (from botocore<1.36.0,>=1.35.0->boto3==1.35.0->-r requirements.txt (line 10))
-  Downloading urllib3-2.7.0-py3-none-any.whl.metadata (6.9 kB)
-Collecting six>=1.5 (from python-dateutil<3.0.0,>=2.1->botocore<1.36.0,>=1.35.0->boto3==1.35.0->-r requirements.txt (line 10))
-  Downloading six-1.17.0-py2.py3-none-any.whl.metadata (1.7 kB)
-Collecting cryptography>=44.0.2 (from asymmetric_jwt_auth->-r requirements.txt (line 13))
-  Downloading cryptography-49.0.0-cp311-abi3-manylinux_2_34_aarch64.whl.metadata (4.3 kB)
-Collecting cffi>=2.0.0 (from cryptography>=44.0.2->asymmetric_jwt_auth->-r requirements.txt (line 13))
-  Downloading cffi-2.0.0-cp312-cp312-manylinux2014_aarch64.manylinux_2_17_aarch64.whl.metadata (2.6 kB)
-Collecting pycparser (from cffi>=2.0.0->cryptography>=44.0.2->asymmetric_jwt_auth->-r requirements.txt (line 13))
-  Downloading pycparser-3.0-py3-none-any.whl.metadata (8.2 kB)
-Downloading asgiref-3.8.1-py3-none-any.whl (23 kB)
-Downloading Django-4.2.16-py3-none-any.whl (8.0 MB)
-   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 8.0/8.0 MB 19.1 MB/s  0:00:00
-Downloading djangorestframework-3.15.2-py3-none-any.whl (1.1 MB)
-   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 1.1/1.1 MB 23.6 MB/s  0:00:00
-Downloading pytz-2024.1-py2.py3-none-any.whl (505 kB)
-Downloading sqlparse-0.5.1-py3-none-any.whl (44 kB)
-Downloading typing_extensions-4.12.2-py3-none-any.whl (37 kB)
-Downloading django_environ-0.11.2-py2.py3-none-any.whl (19 kB)
-Downloading djangorestframework_simplejwt-5.3.1-py3-none-any.whl (101 kB)
-Downloading boto3-1.35.0-py3-none-any.whl (139 kB)
-Downloading django_storages-1.14.4-py3-none-any.whl (31 kB)
-Downloading gunicorn-22.0.0-py3-none-any.whl (84 kB)
-Downloading botocore-1.35.99-py3-none-any.whl (13.3 MB)
-   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 13.3/13.3 MB 23.6 MB/s  0:00:00
-Downloading jmespath-1.1.0-py3-none-any.whl (20 kB)
-Downloading pyjwt-2.13.0-py3-none-any.whl (31 kB)
-Downloading python_dateutil-2.9.0.post0-py2.py3-none-any.whl (229 kB)
-Downloading s3transfer-0.10.4-py3-none-any.whl (83 kB)
-Downloading urllib3-2.7.0-py3-none-any.whl (131 kB)
-Downloading asymmetric_jwt_auth-1.2.1-py3-none-any.whl (35 kB)
-Downloading cryptography-49.0.0-cp311-abi3-manylinux_2_34_aarch64.whl (4.7 MB)
-   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 4.7/4.7 MB 23.9 MB/s  0:00:00
-Downloading cffi-2.0.0-cp312-cp312-manylinux2014_aarch64.manylinux_2_17_aarch64.whl (220 kB)
-Downloading six-1.17.0-py2.py3-none-any.whl (11 kB)
-Downloading packaging-26.2-py3-none-any.whl (100 kB)
-Downloading pycparser-3.0-py3-none-any.whl (48 kB)
-Building wheels for collected packages: mysqlclient
-  Building wheel for mysqlclient (pyproject.toml): started
-  Building wheel for mysqlclient (pyproject.toml): finished with status 'done'
-  Created wheel for mysqlclient: filename=mysqlclient-2.2.4-cp312-cp312-linux_aarch64.whl size=138265 sha256=249dac62be1215f113c625472c8850449a9dff5a0b2818353a3244477055c217
-  Stored in directory: /tmp/pip-ephem-wheel-cache-566lue7h/wheels/20/6f/c3/3b23bb01988b1c0bea0668e2116315ce43ced2179724ab593e
-Successfully built mysqlclient
-Installing collected packages: pytz, urllib3, typing-extensions, sqlparse, six, pyjwt, pycparser, packaging, mysqlclient, jmespath, django-environ, asgiref, python-dateutil, gunicorn, Django, cffi, djangorestframework, django-storages, cryptography, botocore, s3transfer, djangorestframework-simplejwt, asymmetric_jwt_auth, boto3
-
-Successfully installed Django-4.2.16 asgiref-3.8.1 asymmetric_jwt_auth-1.2.1 boto3-1.35.0 botocore-1.35.99 cffi-2.0.0 cryptography-49.0.0 django-environ-0.11.2 django-storages-1.14.4 djangorestframework-3.15.2 djangorestframework-simplejwt-5.3.1 gunicorn-22.0.0 jmespath-1.1.0 mysqlclient-2.2.4 packaging-26.2 pycparser-3.0 pyjwt-2.13.0 python-dateutil-2.9.0.post0 pytz-2024.1 s3transfer-0.10.4 six-1.17.0 sqlparse-0.5.1 typing-extensions-4.12.2 urllib3-2.7.0
-WARNING: Running pip as the 'root' user can result in broken permissions and conflicting behaviour with the system package manager, possibly rendering your system unusable. It is recommended to use a virtual environment instead: https://pip.pypa.io/warnings/venv. Use the --root-user-action option if you know what you are doing and want to suppress this warning.
---> c4b0a837557d
-[2/2] STEP 9/21: COPY uwsgi.ini .
---> 57631629c5ed
-[2/2] STEP 10/21: COPY hivebox hivebox
---> bfc546fb4aac
-[2/2] STEP 11/21: COPY web_project web_project
---> d844734d10ae
-[2/2] STEP 12/21: COPY manage.py .env* ./
---> fa277e9929d1
-[2/2] STEP 13/21: COPY run_nginx_and_gunicorn.sh .
---> 788b96cb335f
-[2/2] STEP 14/21: RUN chmod +x run_nginx_and_gunicorn.sh
---> e8383bdd569f
-[2/2] STEP 15/21: COPY --from=react_builder /app/build /var/www/hivebox
---> abe362f19b5d
-[2/2] STEP 16/21: RUN mkdir -p /var/www/hivebox
---> e47da7fa3585
-[2/2] STEP 17/21: COPY hive_nginx /etc/nginx/sites-available
---> 82f19f3ef751
-[2/2] STEP 18/21: RUN rm /etc/nginx/sites-enabled/default
---> d889a1d03ccf
-[2/2] STEP 19/21: RUN export RUN_TEST=True && python manage.py test --settings=web_project.settings_test
-{'default': {'NAME': 'db.sqlite3', 'USER': '', 'PASSWORD': '', 'HOST': 'app', 'PORT': '', 'ENGINE': 'django.db.backends.sqlite3'}}
-Creating test database for alias 'default'...
-Found 4 test(s).
-System check identified no issues (0 silenced).
-
-Create a test user
-Get tokens
-/usr/local/lib/python3.12/site-packages/jwt/api_jwt.py:147: InsecureKeyLengthWarning: The HMAC key is 1 bytes long, which is below the minimum recommended length of 32 bytes for SHA256. See RFC 7518 Section 3.2.
-  return self._jws.encode(
-Refresh tokens
-/usr/local/lib/python3.12/site-packages/jwt/api_jwt.py:368: InsecureKeyLengthWarning: The HMAC key is 1 bytes long, which is below the minimum recommended length of 32 bytes for SHA256. See RFC 7518 Section 3.2.
-  decoded = self.decode_complete(
-.
-POST a valid record no AUTH HEADER
-Forbidden: /api/sample/
-POST an invalid record "hive": None
-Bad Request: /api/sample/
-POST an invalid record "hive" missing
-Bad Request: /api/sample/
-POST a valid record
-POST valid record (sample_time=1586778792)
-Test NOT Authorized GET method {"hive": 1, "sample_time": "2020-06-30T20:05:00Z"}
-Test the GET method {"hive": 1, "sample_time": "2020-06-30T20:05:00Z"}
-Forbidden: /api/sample/
-Test the DELETE method {"hive": 1, "sample_time": "2020-06-30T20:05:00Z"}
-Test again the DELETE method {"hive": 1, "sample_time": "2020-04-13T11:53:12Z"}
-.
-Test NOT Authorized /hive POST method
-Create a test user
-Unauthorized: /api/hive/
-Get tokens
-Test /hive POST method
-Test /hive GET method
-{'api_version': 1.0, 'user': 1, 'data': {'totalItems': 1, 'items': [{'hive_id': 1, 'user': 1, 'group': None, 'name': 'Test_hive'}]}}
-Test /hive PUT method
-{'hive_id': 1, 'user': 1, 'group': None, 'name': 'New_hive'}
-Test /hive DELETE method
-Test again /hive GET method to confirm deletion
-.
-Test NOT Authorized multiple samples GET method {'hive': 1, 'sample1': '2020-04-01T00:05:00Z', 'sample2': '2020-06-30T23:05:00Z'}
-Unauthorized: /api/samples/
-POST a valid record
-POST valid record (sample_time=1586778792)
-Create a test user
-Get tokens
-Test multiple samples GET method {'hive': 1, 'sample1': '2020-04-01T00:05:00Z', 'sample2': '2020-06-30T23:05:00Z'}
-15m 2
-{'hive': 1, 'sample_time': '2020-04-13 11:45', 'temp_low': Decimal('0.000'), 'temp_high': Decimal('33.380'), 'temp_hot': Decimal('32.690'), 'temp_out': Decimal('23.810'), 'temp_target': Decimal('9.000'), 'humi_in': Decimal('0.00'), 'humi_out': None, 'heat_pwr': 0, 'fan': 2233, 'mode': 'monitor', 'heater_breakers': 10}
-.
-----------------------------------------------------------------------
-Ran 4 tests in 0.450s
-
-OK
-Destroying test database for alias 'default'...
---> b99c8c6dfad2
-[2/2] STEP 20/21: CMD ./run_nginx_and_gunicorn.sh
---> 96fafbc4777c
-[2/2] STEP 21/21: LABEL "com.docker.compose.image.builder"="classic"
-[2/2] COMMIT docker.io/library/hive_monitoring-app:latest
---> 7d4164e96ad1
-Successfully tagged docker.io/library/hive_monitoring-app:latest
-7d4164e96ad19a6e54a60a029b2d8fae5ab8d5fa9e5beb9e6451ac06988fa16e
-Successfully built 7d4164e96ad1
-Successfully tagged hive_monitoring-app
- Image hive_monitoring-app Built 
- Image hive_monitoring-app Built 

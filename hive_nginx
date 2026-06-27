@@ -10,7 +10,7 @@ upstream app_server {
   }
 
 server {
-       listen $PORT;
+       listen 80;
        
        server_name bee-comfort.com;
 
