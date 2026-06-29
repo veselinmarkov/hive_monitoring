@@ -19,6 +19,21 @@ const axiosInstance = axios.create({
     }
 });
 
+// Notify the UI (Navbar shows a brief Snackbar) about backend errors,
+// while keeping the full error details available in the console.
+// 401 is excluded since it is handled internally by the token refresh flow.
+axiosInstance.interceptors.response.use(
+    response => response,
+    error => {
+        console.error('API error:', error);
+        if (! error.response || error.response.status !== 401) {
+            const status = error.response ? error.response.status : 'No response';
+            window.dispatchEvent(new CustomEvent('api-error', { detail: { status } }));
+        }
+        return Promise.reject(error);
+    }
+);
+
 let getSamples = async (hive_id, timerange) => {
     console.log(new Date(), hive_id, timerange);
     return await axiosInstance.get('/api/samples/',  { params: { sample1: timerange.begin(), 

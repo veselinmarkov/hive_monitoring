@@ -2,9 +2,8 @@
 Django settings for web_project project.
 
 ENV_FILE_LOCATION - define the location of the .env configuration file
-GOOGLE_CLOUD_PROJECT - project name in GCP. Set if the project is depolyed to GCP
-USE_CLOUD_SQL_AUTH_PROXY - True/False. Change the Mysql PORT to 5432 for using a proxy to GCP SQL
-SETTINGS_NAME - (default:'djangp_settings') name of the configuration secret in GCP 
+DATABASE_URL + SECRET_KEY - passed directly as environment variables (e.g. Elastic Beanstalk)
+AWS_SECRETS_NAME - name of the secret in AWS Secrets Manager (default: 'django_settings')
 RUN_TEST - Setup a SQLite db for testing
 DEVELOP - True/False set the DEBUG flag in the Django project (must be False for production)
 """
@@ -14,8 +13,8 @@ import os
 import io
 import environ
 from datetime import timedelta
-import google.auth
-from google.cloud import secretmanager
+import boto3
+from botocore.exceptions import NoCredentialsError
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -31,13 +30,8 @@ if file_location:
     else:
         env_file = os.path.join(os.environ.get('ENV_FILE_LOCATION'), ".env")
 
-# Attempt to load the Project ID into the environment, safely failing on error.
-try:
-    _, proj = google.auth.default()
-    if proj:
-        os.environ["GOOGLE_CLOUD_PROJECT"] = proj
-except google.auth.exceptions.DefaultCredentialsError:
-    pass
+# Attempt to load AWS region or use default
+aws_region = os.environ.get("AWS_REGION", "us-east-1")
 
 project_id = None
 if os.path.isfile(env_file):
@@ -47,22 +41,27 @@ if os.path.isfile(env_file):
 elif os.environ.get("RUN_TEST", None):
     placeholder = (
         f"SECRET_KEY=a\n"
-        "GS_BUCKET_NAME=None\n"
+        "AWS_STORAGE_BUCKET_NAME=None\n"
         f"DATABASE_URL=sqlite://{os.path.join(BASE_DIR, 'db.sqlite3')}"
     )
     env.read_env(io.StringIO(placeholder))
-elif os.environ.get("GOOGLE_CLOUD_PROJECT", None):
-    # Pull secrets from Secret Manager
-    project_id = os.environ.get("GOOGLE_CLOUD_PROJECT")
-
-    client = secretmanager.SecretManagerServiceClient()
-    settings_name = os.environ.get("SETTINGS_NAME", "django_settings")
-    name = f"projects/{project_id}/secrets/{settings_name}/versions/latest"
-    payload = client.access_secret_version(name=name).payload.data.decode("UTF-8")
-
-    env.read_env(io.StringIO(payload))
+elif os.environ.get("DATABASE_URL") and os.environ.get("SECRET_KEY"):
+    # DATABASE_URL and SECRET_KEY injected directly as environment variables (e.g. Elastic Beanstalk)
+    env.read_env(io.StringIO(""))
+elif os.environ.get("AWS_SECRETS_NAME", None):
+    # Pull secrets from AWS Secrets Manager
+    secrets_name = os.environ.get("AWS_SECRETS_NAME", "django_settings")
+    client = boto3.client('secretsmanager', region_name=aws_region)
+    try:
+        response = client.get_secret_value(SecretId=secrets_name)
+        payload = response['SecretString']
+        env.read_env(io.StringIO(payload))
+    except NoCredentialsError:
+        raise Exception("AWS credentials not found.")
+    except Exception as e:
+        raise Exception(f"Error retrieving secret from AWS Secrets Manager: {e}")
 else:
-    raise Exception("No local .env or GOOGLE_CLOUD_PROJECT detected. No secrets found.")
+    raise Exception("No local .env, DATABASE_URL, or AWS_SECRETS_NAME detected. No secrets found.")
 
 
 # SECRET_KEY = 'django-insecure-rna9496%jo3u**+fetl60$4qyq9mx9xtcli+r$i0&5hb+s15^)'
@@ -91,7 +90,7 @@ INSTALLED_APPS = [
     'asymmetric_jwt_auth',
 ]
 
-if project_id:
+if os.environ.get("AWS_SECRETS_NAME", None):
     INSTALLED_APPS.append('web_project')
     INSTALLED_APPS.append('storages')
 
@@ -195,13 +194,16 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.2/howto/static-files/
-# Define static storage via django-storages[google]
+# Define static storage via django-storages[s3]
 
-if project_id:
-    GS_BUCKET_NAME = env("GS_BUCKET_NAME")
-    DEFAULT_FILE_STORAGE = "storages.backends.gcloud.GoogleCloudStorage"
-    STATICFILES_STORAGE = "storages.backends.gcloud.GoogleCloudStorage"
-    GS_DEFAULT_ACL = "publicRead"
+if os.environ.get("AWS_SECRETS_NAME", None):
+    AWS_STORAGE_BUCKET_NAME = env("AWS_STORAGE_BUCKET_NAME")
+    DEFAULT_FILE_STORAGE = "storages.backends.s3boto3.S3Boto3Storage"
+    STATICFILES_STORAGE = "storages.backends.s3boto3.S3Boto3Storage"
+    AWS_S3_OBJECT_PARAMETERS = {
+        'CacheControl': 'max-age=86400',
+    }
+    AWS_DEFAULT_ACL = 'public-read'
 
 STATIC_URL = "/static/"
 STATIC_ROOT = os.path.join(BASE_DIR, 'static/')

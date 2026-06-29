@@ -26,7 +26,7 @@ if os.path.isfile(env_file):
 else:
     placeholder = (
         f"SECRET_KEY=a\n"
-        "GS_BUCKET_NAME=None\n"
+        "AWS_STORAGE_BUCKET_NAME=None\n"
         f"DATABASE_URL=sqlite://{os.path.join(BASE_DIR, 'db.sqlite3')}"
     )
     env.read_env(io.StringIO(placeholder))
@@ -149,7 +149,7 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.2/howto/static-files/
-# Define static storage via django-storages[google]
+# Define static storage via django-storages[s3]
 STATIC_URL = "/static/"
 
 STATIC_ROOT = os.path.join(BASE_DIR, 'static/')
@@ -214,4 +214,8 @@ SIMPLE_JWT = {
     'USER_ID_CLAIM': 'user_id',
     'AUTH_TOKEN_CLASSES': ('rest_framework_simplejwt.tokens.AccessToken',),
     'TOKEN_TYPE_CLAIM': 'token_type',
+}
+
+ASYMMETRIC_JWT_AUTH = {
+    'NONCE_BACKEND': 'asymmetric_jwt_auth.nonce.null.NullNonceBackend',
 }

@@ -5,11 +5,11 @@ from rest_framework.exceptions import ValidationError
 from rest_framework.utils.serializer_helpers import ReturnDict
 from django.http.response import Http404
 from django.views.decorators.csrf import csrf_exempt
+from django.db import connection
 import logging
 
 from rest_framework.views import APIView
 
-from web_project import settings
 from .models import SamplesH, Samples, SamplesRange, Hives
 from .serializers import SamplesH_seri, Samples_seri, UserSerializer, HivesSerializer
 from rest_framework.parsers import JSONParser
@@ -38,7 +38,7 @@ logger.setLevel(logging.DEBUG)
 THR_LOW = settings.HIVEBOX.get('AGGREGATE_THRESHOLD_LOW', 100) if settings.HIVEBOX else 100
 THR_HIGH = settings.HIVEBOX.get('AGGREGATE_THRESHOLD_HIGH', 500) if settings.HIVEBOX else 500
 
-AGGR_STR = ["",
+AGGR_STR_MYSQL = ["",
     "date_format(sample_time, '%%Y-%%m-%%d %%H:%%i:00')",
     "concat(date_format(sample_time, '%%Y-%%m-%%d %%H:'),lpad(floor(minute(sample_time)/5)*5, 2, '0'))",
     "concat(date_format(sample_time, '%%Y-%%m-%%d %%H:'),lpad(floor(minute(sample_time)/15)*15, 2, '0'))",
@@ -46,6 +46,19 @@ AGGR_STR = ["",
     #"concat(date_format(sample_time, '%%Y-%%m-%%d '),lpad(floor(hour(sample_time)/6)*6, 2, '0'), ':00')",
     "date_format(sample_time, '%%Y-%%m-%%d')"
 ]
+
+AGGR_STR_SQLITE = ["",
+    "strftime('%%Y-%%m-%%d %%H:%%M:00', sample_time)",
+    "strftime('%%Y-%%m-%%d %%H:', sample_time) || printf('%%02d', (cast(strftime('%%M', sample_time) as integer) / 5) * 5)",
+    "strftime('%%Y-%%m-%%d %%H:', sample_time) || printf('%%02d', (cast(strftime('%%M', sample_time) as integer) / 15) * 15)",
+    "strftime('%%Y-%%m-%%d %%H:00:00', sample_time)",
+    "strftime('%%Y-%%m-%%d', sample_time)"
+]
+
+def get_aggr_str(step):
+    if connection.vendor == 'sqlite':
+        return AGGR_STR_SQLITE[step]
+    return AGGR_STR_MYSQL[step]
 #AGGR_NAMES = ['20s','1m', '5m', '15m', '1h', '6h', '1d']
 AGGR_NAMES = ['20s','1m', '5m', '15m', '1h', '1d']
 #AGGR_PERIOD = [1, 60, 5*60, 15*60, 60*60, 6*60*60, 24*60*60]
@@ -165,12 +178,12 @@ class SamplesRangeView(APIView):
                     round(avg(temp_target),3) as temp_target,
                     round(avg(humi_in),2) as humi_in,
                     round(avg(humi_out),2) as humi_out,
-                    floor(avg(heat_pwr)) as heat_pwr,
-                    floor(avg(fan)) as fan,
+                    round(avg(heat_pwr),0) as heat_pwr,
+                    round(avg(fan),0) as fan,
                     max(mode) as mode,
                     max(heater_breakers) as heater_breakers FROM samples WHERE 
                     sample_time >= %s and sample_time < %s and hive = %s 
-                    group by hive, {sample_time}'''.format(sample_time = AGGR_STR[step])
+                    group by hive, {sample_time}'''.format(sample_time = get_aggr_str(step))
                 rows = SamplesRange.objects.raw(query, [sampletime1, sampletime2, hive])
             steps_try -= 1
         logger.debug('rows returned: %d' % (len(rows)))

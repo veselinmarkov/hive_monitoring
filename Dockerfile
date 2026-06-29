@@ -1,18 +1,34 @@
-FROM node:14-slim as build-stage
-COPY react_project/package*.json ./app/
+# ============================================================================
+# Stage 1: Build React Frontend
+# ============================================================================
+FROM public.ecr.aws/docker/library/node:18-alpine AS react_builder
+
 WORKDIR /app
-RUN npm install
-COPY react_project/ /app/
+
+# Copy React project files
+COPY react_project/package*.json ./
+
+# Install dependencies and bypass legacy peer dependency conflicts
+RUN npm ci --only=production --legacy-peer-deps --cache /tmp/npm-cache
+
+# Copy React source code
+COPY react_project/public ./public
+COPY react_project/src ./src
+
+# Ensure OpenSSL legacy provider for Node during build
+ENV NODE_OPTIONS=--openssl-legacy-provider
+
+# Build React app for production
 RUN npm run build
 
+# ============================================================================
+# Stage 2: Build Python/Django Backend
+# ============================================================================
+FROM public.ecr.aws/docker/library/python:3.12-slim
 
-FROM python:3.8-slim
-
-RUN apt-get update
-RUN apt-get --yes install gcc
-RUN apt-get --yes install python3-dev libmariadb-dev
-RUN apt-get --yes install nginx
-RUN apt-get -y install gettext-base
+RUN apt-get update && \
+    apt-get --yes install gcc pkg-config python3-dev libmariadb-dev nginx gettext-base && \
+    apt-get clean && rm -rf /var/lib/apt/lists/*
 
 ENV APP_HOME /app
 WORKDIR $APP_HOME
@@ -20,31 +36,29 @@ WORKDIR $APP_HOME
 # Removes output stream buffering, allowing for more efficient logging
 ENV PYTHONUNBUFFERED 1
 
-# Install dependencies
+# Install Python dependencies
 COPY requirements.txt .
-
 RUN pip install --upgrade pip
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy local code to the container image.
-# COPY . .
+# Copy Django application code
 COPY uwsgi.ini .
 COPY hivebox hivebox
 COPY web_project web_project
-COPY manage.py .env*  ./
+COPY manage.py .env* ./
 COPY run_nginx_and_gunicorn.sh .
-RUN mkdir /var/www/hivebox && chmod +x run_nginx_and_gunicorn.sh
-COPY --from=build-stage /app/build/ /var/www/hivebox
+RUN chmod +x run_nginx_and_gunicorn.sh
+
+# Copy built React app from stage 1
+COPY --from=react_builder /app/build /var/www/hivebox
+
+# Setup Nginx
+RUN mkdir -p /var/www/hivebox
 COPY hive_nginx /etc/nginx/sites-available
-#RUN ln -s /etc/nginx/sites-available/hive_nginx /etc/nginx/sites-enabled/hive_nginx
 RUN rm /etc/nginx/sites-enabled/default
 
+# Run tests
 RUN export RUN_TEST=True && python manage.py test --settings=web_project.settings_test
-# Run the web service on container startup. Here we use the gunicorn
-# webserver, with one worker process and 8 threads.
-# For environments with multiple CPU cores, increase the number of workers
-# to be equal to the cores available.
-# Timeout is set to 0 to disable the timeouts of the workers to allow Cloud Run to handle instance scaling.
-# CMD exec gunicorn --bind 0.0.0.0:$PORT --workers 1 --threads 8 --timeout 0 web_project.wsgi:application
-# CMD ["nginx", "-g", "daemon off;"]
+
+# Start both Nginx and Gunicorn
 CMD ./run_nginx_and_gunicorn.sh

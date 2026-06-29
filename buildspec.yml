@@ -1,0 +1,80 @@
+version: 0.2
+
+env:
+  variables:
+    AWS_DEFAULT_REGION: eu-central-1
+    AWS_ACCOUNT_ID: "412265554969"
+    FRONTEND_S3_BUCKET: "hive-frontend-412265554969-eu-central-1-an"
+    CLOUDFRONT_DISTRIBUTION_ID: "YOUR_DISTRIBUTION_ID"
+    ECR_REPOSITORY: "hive-backend"
+    EB_APPLICATION_NAME: "hive-backend-app"
+    EB_ENVIRONMENT_NAME: "hive-backend-env"
+    EB_BUCKET: "hive-eb-deployments-412265554969-eu-central-1-an"
+    DOCKER_IMAGE_NAME: "hive-backend"
+
+phases:
+  install:
+    runtime-versions:
+      python: 3.12
+      nodejs: 18
+    commands:
+      - echo Installing build dependencies
+      - pip install --upgrade pip boto3
+
+  pre_build:
+    commands:
+      - echo Logging in to Amazon ECR
+      - export REPOSITORY_URI=${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/${ECR_REPOSITORY}
+      - export IMAGE_TAG=${CODEBUILD_RESOLVED_SOURCE_VERSION:=latest}
+      - aws --version
+      - aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin $REPOSITORY_URI
+      - aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin public.ecr.aws
+      - echo Reading database connection info from Parameter Store
+      - export DB_HOST=$(aws ssm get-parameter --name /hive/db/host --query 'Parameter.Value' --output text)
+      - export DB_NAME_VALUE=$(aws ssm get-parameter --name /hive/db/name --query 'Parameter.Value' --output text)
+      - export DB_USERNAME_VALUE=$(aws ssm get-parameter --name /hive/db/username --query 'Parameter.Value' --output text)
+      - export DB_PASSWORD_VALUE=$(aws ssm get-parameter --name /hive/db/password --with-decryption --query 'Parameter.Value' --output text)
+      - export DATABASE_URL="mysql://${DB_USERNAME_VALUE}:${DB_PASSWORD_VALUE}@${DB_HOST}:3306/${DB_NAME_VALUE}"
+      - export SECRET_KEY=$(aws ssm get-parameter --name /hive/django/secret_key --with-decryption --query 'Parameter.Value' --output text)
+
+  build:
+    commands:
+      - echo Building frontend
+      - cd react_project
+      - npm ci --legacy-peer-deps --cache /tmp/npm-cache
+      - npm run build
+      - cd ..
+      - echo Deploying frontend build to S3
+      - aws s3 sync react_project/build/ s3://$FRONTEND_S3_BUCKET --delete
+      - |
+        if [ -n "$CLOUDFRONT_DISTRIBUTION_ID" ] && [ "$CLOUDFRONT_DISTRIBUTION_ID" != "YOUR_DISTRIBUTION_ID" ]; then
+          aws cloudfront create-invalidation --distribution-id $CLOUDFRONT_DISTRIBUTION_ID --paths "/*"
+        else
+          echo "Skipping CloudFront invalidation because CLOUDFRONT_DISTRIBUTION_ID is not set."
+        fi
+      - echo Building backend Docker image
+      - docker build -t $REPOSITORY_URI:$IMAGE_TAG -f Dockerfile .
+
+  post_build:
+    commands:
+      - echo Pushing Docker image to ECR
+      - docker push $REPOSITORY_URI:$IMAGE_TAG
+      - echo Generating Dockerrun.aws.json for Elastic Beanstalk
+      - printf '{"AWSEBDockerrunVersion":"1","Image":{"Name":"%s","Update":"true"},"Ports":[{"ContainerPort":"80"}]}' "$REPOSITORY_URI:$IMAGE_TAG" > Dockerrun.aws.json
+      - zip -r deploy.zip Dockerrun.aws.json
+      - echo Uploading EB source bundle to S3
+      - aws s3 cp deploy.zip s3://$EB_BUCKET/deployments/$CODEBUILD_BUILD_NUMBER-deploy.zip
+      - echo Creating Elastic Beanstalk application version
+      - aws elasticbeanstalk create-application-version --application-name $EB_APPLICATION_NAME --version-label $CODEBUILD_BUILD_NUMBER --source-bundle S3Bucket=$EB_BUCKET,S3Key=deployments/$CODEBUILD_BUILD_NUMBER-deploy.zip
+      - echo Updating Elastic Beanstalk environment
+      - |
+        aws elasticbeanstalk update-environment --environment-name $EB_ENVIRONMENT_NAME --version-label $CODEBUILD_BUILD_NUMBER --option-settings \
+          Namespace=aws:elasticbeanstalk:application:environment,OptionName=DATABASE_URL,Value="$DATABASE_URL" \
+          Namespace=aws:elasticbeanstalk:application:environment,OptionName=SECRET_KEY,Value="$SECRET_KEY"
+      - echo Ensuring CloudFront distribution exists in front of EB
+      - python3 infrastructure/ensure_cf_distribution.py
+
+artifacts:
+  files:
+    - buildspec.yml
+    - Dockerrun.aws.json

@@ -4,9 +4,9 @@
 set -m
   
 # Start the primary process and put it in the background
-gunicorn --bind unix:/tmp/gunicorn.sock --workers 1 --threads 8 --timeout 0 web_project.wsgi:application --log-syslog &
+gunicorn --bind 0.0.0.0:8000 --workers 1 --threads 8 --timeout 0 web_project.wsgi:application --log-syslog &
 
-envsubst '\$PORT' < /etc/nginx/sites-available/hive_nginx > /etc/nginx/sites-enabled/hive_nginx
+cp /etc/nginx/sites-available/hive_nginx /etc/nginx/sites-enabled/hive_nginx
 # Start the helper process
 nginx -g 'daemon off;'
   

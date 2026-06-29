@@ -1,0 +1,28 @@
+version: 0.2
+
+env:
+  variables:
+    AWS_DEFAULT_REGION: eu-central-1
+    EB_BUCKET: "your-eb-source-bucket"
+    DB_INSTANCE_NAME: "hive-mysql-host"
+    DB_INSTANCE_TYPE: "t3.small"
+    DB_VOLUME_SIZE_GB: "20"
+    DB_NAME: "hive"
+    DB_USERNAME: "hiveadmin"
+
+phases:
+  install:
+    runtime-versions:
+      python: 3.12
+    commands:
+      - pip install --upgrade pip
+      - pip install boto3
+
+  build:
+    commands:
+      - echo Provisioning Hive MySQL EC2 host
+      - python infrastructure/provision_db.py
+
+artifacts:
+  files:
+    - infra-buildspec.yml
